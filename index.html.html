@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050505">
+<title>Knicks Coach V2</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#050505;--panel:#0d0d0d;--line:#343434;--text:#fff;--muted:#999;--orange:#F58426;--green:#23d160;--blue:#1597e5;--red:#ff6b6b}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;overflow-x:hidden}
+button,input{font:inherit} button{cursor:pointer}
+.app{width:100%;max-width:430px;margin:auto;padding:4px}
+.top{display:grid;grid-template-columns:1fr 1.05fr 1fr;gap:5px}
+.score,.timer{border:1px solid var(--line);border-radius:10px;background:var(--panel);min-height:92px;padding:7px;text-align:center}
+.score b{display:block;font-size:11px;margin-bottom:4px}.score input{width:68px;border:0;background:transparent;color:#fff;font-size:44px;font-weight:1000;text-align:center}
+.halves{display:grid;grid-template-columns:1fr 1fr;gap:4px}.half{height:27px;border:1px solid #333;border-radius:7px;background:#111;color:#aaa;font-weight:1000}.half.on{border-color:var(--orange);color:var(--orange)}
+.clock{font-size:40px;font-weight:1000;line-height:1.1;font-variant-numeric:tabular-nums}
+.timerBtns{display:grid;grid-template-columns:.8fr 1.4fr .9fr;gap:5px;margin-top:5px}.timerBtns button,.gameInfo button,.footer button{height:34px;border:1px solid #3a3a3a;border-radius:8px;background:#111;color:#fff;font-size:10px;font-weight:950}
+#start{background:var(--orange);color:#000;border-color:var(--orange)}
+.gameInfo{display:grid;grid-template-columns:1fr 104px;gap:5px;margin-top:5px}
+.gameMeta{border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:7px 9px;min-height:56px}
+.gameNum{font-size:9px;color:#aaa}.opp{font-size:17px;font-weight:1000}.meta{font-size:10px;color:#aaa;margin-top:2px}
+#nextGame{height:56px;border-color:var(--blue);color:#7ecbff}
+.players{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}
+.card{position:relative;border:1px solid #383838;border-radius:10px;background:#0d0d0d;padding:7px;min-height:112px}
+.card.met{border-color:#0fa83e;background:linear-gradient(135deg,#082311,#0d0d0d 60%)}
+.card.absent{opacity:.5}
+.nameRow{display:flex;justify-content:space-between;gap:4px;align-items:center}.name{font-size:18px;font-weight:1000;overflow:hidden;text-overflow:ellipsis}.status{height:27px;min-width:45px;border:1px solid #444;border-radius:7px;background:#222;color:#ddd;font-size:9px;font-weight:1000}.status.on{background:#073f19;border-color:#0d7c31;color:#72ff9e}.status.absent{background:#333}
+.mins{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}.minBox{font-size:10px;color:#aaa}.minBox b{font-size:14px;color:#fff;margin-left:3px;font-variant-numeric:tabular-nums}.minBox.met b{color:#50e877}
+.bar{height:5px;background:#444;border-radius:99px;margin-top:3px;overflow:hidden}.fill{height:100%;background:var(--orange)}.minBox.met .fill{background:var(--green)}
+.cardBottom{display:grid;grid-template-columns:1fr 42px 42px;gap:5px;align-items:end;margin-top:8px}.pts{font-size:23px;font-weight:1000}.pts small{font-size:8px;color:#aaa}.pm{height:34px;border:1px solid #555;border-radius:7px;background:#222;color:#fff;font-size:22px;font-weight:1000}.pm.plus{background:var(--orange);border-color:var(--orange)}
+.footer{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:5px}.footer button{height:43px;font-size:8px;padding:2px}.footer .history{border-color:var(--orange)}
+.modal{position:fixed;inset:0;z-index:100;background:#050505f5;display:none;overflow:auto;padding:10px}.modal.on{display:block}.box{max-width:430px;margin:auto}.modalHead{display:flex;justify-content:space-between;align-items:center}.modalHead h2{margin:4px 0 8px}.close{height:34px;background:#111;color:#fff;border:1px solid #444;border-radius:7px;font-weight:900}
+.backups{display:grid;grid-template-columns:1fr 1fr;gap:5px}.backups button{height:38px;background:#111;color:#fff;border:1px solid #444;border-radius:8px;font-size:9px;font-weight:950}.backups button:first-child{border-color:var(--blue)}.backups button:last-child{border-color:var(--orange)}
+.record{margin:8px 0;border:1px solid #333;border-radius:9px;padding:9px;font-size:11px;color:#aaa}.record b{display:block;color:var(--orange);font-size:30px}
+.seasonPts{display:grid;grid-template-columns:1fr 1fr;gap:4px}.seasonP{border:1px solid #292929;border-radius:7px;padding:7px;background:#0b0b0b}.seasonP b{font-size:20px}.seasonP span{float:right;color:#aaa}
+.hist{margin-top:8px;display:grid;gap:5px}.histItem{border:1px solid #333;border-radius:8px;padding:8px;background:#0d0d0d;font-size:11px}.histItem b{display:block;font-size:13px}
+.clipCats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.clipCats button{height:34px;background:#111;color:#fff;border:1px solid #333;border-radius:7px;font-size:8px;font-weight:900}.clipCats button.on{border-color:var(--blue)}
+.plays{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.play{min-height:50px;background:#0d0d0d;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;padding:7px;font-size:10px;font-weight:900}.play small{display:block;color:#999;margin-top:2px;font-weight:500}
+.court{margin-top:8px;aspect-ratio:1/1;background:#eef4f8;border-radius:9px;position:relative;color:#111;overflow:hidden}.court:before{content:"";position:absolute;inset:5%;border:2px solid #5b6770}.court:after{content:"";position:absolute;width:38%;height:38%;border:2px solid #5b6770;border-radius:50%;left:31%;bottom:-19%}
+.call{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:24px;font-weight:1000;color:#111}
+@media(max-height:760px){.score,.timer{min-height:82px}.clock{font-size:34px}.card{min-height:100px;padding:5px}.name{font-size:16px}.mins{margin-top:5px}.cardBottom{margin-top:5px}.footer button{height:38px}}
+</style>
+</head>
+<body><div class="app">
+<div class="top">
+ <div class="score"><b>KNICKS</b><input id="ks" type="number" min="0" value="0"></div>
+ <div class="timer"><div class="halves"><button class="half on" data-half="0">1H</button><button class="half" data-half="1">2H</button></div><div class="clock" id="clock">20:00</div></div>
+ <div class="score"><b>OPPONENT</b><input id="os" type="number" min="0" value="0"></div>
+</div>
+<div class="timerBtns"><button id="resetClock">RESET</button><button id="start">START</button><button id="nextHalf">NEXT HALF</button></div>
+<div class="gameInfo"><div class="gameMeta"><div class="gameNum" id="gameNum"></div><div class="opp" id="opp"></div><div class="meta" id="meta"></div></div><button id="nextGame">NEXT GAME ▶</button></div>
+<div class="players" id="players"></div>
+<div class="footer"><button id="endGame">END GAME</button><button class="history" id="historyBtn">SEASON HISTORY</button><button id="resetGame">RESET GAME</button><button id="clipBtn">📋 CLIPBOARD</button></div>
+</div>
+
+<div class="modal" id="historyModal"><div class="box">
+ <div class="modalHead"><h2>Season History</h2><button class="close" data-close="historyModal">CLOSE</button></div>
+ <div class="backups"><button id="exportBtn">EXPORT SEASON BACKUP</button><button id="importBtn">IMPORT SEASON BACKUP</button></div><input id="file" type="file" accept=".json,application/json" hidden>
+ <div class="record">SEASON RECORD <b id="record">0–0</b></div>
+ <div class="seasonPts" id="seasonPts"></div><div class="hist" id="hist"></div>
+</div></div>
+
+<div class="modal" id="clipModal"><div class="box">
+ <div class="modalHead"><h2>Clipboard</h2><button class="close" data-close="clipModal">CLOSE</button></div>
+ <div class="clipCats" id="clipCats"></div><div class="plays" id="plays"></div>
+ <div class="court"><div class="call" id="call">5-SPOT SPACING</div></div>
+</div></div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const P=["Zane","Jonah","Vivaan","Krew","Nhonebong","Max","Niam","Justin","Sidarth","Ethan"];
+const S=[
+["Sun 9/6","12 PM","D1 White","HOME","Court 03"],
+["Sun 9/20","3 PM","Collinsville Pirates","HOME","Court 01"],
+["Sun 9/27","12 PM","Collinsville Pirates","AWAY","Court 01"],
+["Sun 10/4","12 PM","Prosper Elite","AWAY","Court 03"],
+["Sat 10/17","3 PM","One J Blue","HOME","Court 03"],
+["Sat 10/24","9 AM","Wolfpack","HOME","Court 03"],
+["Sat 10/31","3 PM","D1 White","AWAY","Court 03"],
+["Sun 11/8","1 PM","Jags","AWAY","Court 04"]
+];
+const K="knicks_v2_live",H="knicks_v2_history";
+const fresh=g=>({g,half:0,rem:[1200,1200],r:false,last:null,ks:0,os:0,status:Object.fromEntries(P.map(n=>[n,"off"])),played:Object.fromEntries(P.map(n=>[n,[0,0]])),pts:Object.fromEntries(P.map(n=>[n,0]))});
+const load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
+let hist=Array.isArray(load(H))?load(H):[];
+let st=load(K)||fresh(3);
+function save(){localStorage.setItem(K,JSON.stringify({...st,r:false,last:null}));localStorage.setItem(H,JSON.stringify(hist))}
+const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+function normalizeImportedGame(g){
+ const pts=Object.fromEntries(P.map(n=>[n,Number(g?.pts?.[n]||0)]));
+ let played=Object.fromEntries(P.map(n=>[n,[0,0]]));
+ if(g&&g.played){
+   P.forEach(n=>{
+     const x=g.played[n];
+     if(Array.isArray(x)){
+       if(x.length>=4) played[n]=[Number(x[0]||0)+Number(x[1]||0),Number(x[2]||0)+Number(x[3]||0)];
+       else played[n]=[Number(x[0]||0),Number(x[1]||0)];
+     }
+   });
+ }
+ return {g:Number(g?.g||0),opp:g?.opp||S[Number(g?.g||0)]?.[2]||"Opponent",date:g?.date||S[Number(g?.g||0)]?.[0]||"Game",ks:Number(g?.ks||0),os:Number(g?.os||0),pts,played};
+}
+function seasonPoints(){const o=Object.fromEntries(P.map(n=>[n,0]));hist.forEach(g=>P.forEach(n=>o[n]+=Number(g.pts?.[n]||0)));return o}
+function record(){let w=0,l=0;hist.forEach(g=>{if(g.ks>g.os)w++;else if(g.ks<g.os)l++});return `${w}–${l}`}
+function render(){
+ const g=S[st.g]||S[0];
+ $("gameNum").textContent=`Game ${st.g+1} of ${S.length}`;$("opp").textContent=g[2];$("meta").textContent=`${g[0]} · ${g[1]} · ${g[3]} · ${g[4]}`;
+ $("clock").textContent=fmt(st.rem[st.half]);$("ks").value=st.ks;$("os").value=st.os;$("start").textContent=st.r?"PAUSE":"START";
+ document.querySelectorAll(".half").forEach(b=>b.classList.toggle("on",Number(b.dataset.half)===st.half));
+ $("players").innerHTML=P.map(n=>{
+  const p=st.played[n], met0=p[0]>=300,met1=p[1]>=300,met=st.half===0?met0:met1,s=st.status[n];
+  return `<div class="card ${met?"met":""} ${s==="absent"?"absent":""}" data-name="${n}">
+   <div class="nameRow"><div class="name">${n}</div><button class="status ${s}" data-status="${n}">${s.toUpperCase()}</button></div>
+   <div class="mins"><div class="minBox ${met0?"met":""}">1H <b>${fmt(p[0])}</b><div class="bar"><div class="fill" style="width:${Math.min(100,p[0]/3)}%"></div></div></div><div class="minBox ${met1?"met":""}">2H <b>${fmt(p[1])}</b><div class="bar"><div class="fill" style="width:${Math.min(100,p[1]/3)}%"></div></div></div></div>
+   <div class="cardBottom"><div class="pts">${st.pts[n]} <small>PTS</small></div><button class="pm" data-minus="${n}">−</button><button class="pm plus" data-plus="${n}">+</button></div>
+  </div>`}).join("");
+ document.querySelectorAll("[data-status]").forEach(b=>b.onclick=()=>{const n=b.dataset.status;st.status[n]=st.status[n]==="off"?"on":st.status[n]==="on"?"absent":"off";render();save()});
+ document.querySelectorAll("[data-plus]").forEach(b=>b.onclick=()=>{st.pts[b.dataset.plus]++;render();save()});
+ document.querySelectorAll("[data-minus]").forEach(b=>b.onclick=()=>{const n=b.dataset.minus;st.pts[n]=Math.max(0,st.pts[n]-1);render();save()});
+}
+function tick(){
+ if(!st.r)return;const now=Date.now(),e=Math.floor((now-st.last)/1000);if(e<1)return;const d=Math.min(e,st.rem[st.half]);st.rem[st.half]-=d;
+ P.forEach(n=>{if(st.status[n]==="on")st.played[n][st.half]+=d});st.last+=d*1000;if(st.rem[st.half]<=0)st.r=false;render();save();
+}
+setInterval(tick,250);
+$("start").onclick=()=>{st.r=!st.r;st.last=st.r?Date.now():null;render();save()};
+document.querySelectorAll(".half").forEach(b=>b.onclick=()=>{st.r=false;st.half=Number(b.dataset.half);render();save()});
+$("nextHalf").onclick=()=>{st.r=false;st.half=1;render();save()};
+$("resetClock").onclick=()=>{if(confirm(`Reset ${st.half?"2H":"1H"} clock to 20:00? Player minutes stay recorded.`)){st.r=false;st.rem[st.half]=1200;render();save()}};
+$("ks").oninput=e=>{st.ks=Math.max(0,Number(e.target.value)||0);save()};$("os").oninput=e=>{st.os=Math.max(0,Number(e.target.value)||0);save()};
+$("nextGame").onclick=()=>{if(st.g<S.length-1){st.r=false;st=fresh(st.g+1);render();save()}};
+$("resetGame").onclick=()=>{if(confirm("Reset CURRENT game? Saved season history stays.")){st=fresh(st.g);render();save()}};
+$("endGame").onclick=()=>{
+ st.r=false;const g=S[st.g];if(!confirm(`END GAME?\\n${g[0]} vs ${g[2]}\\nFinal: Knicks ${st.ks}-${st.os}`))return;
+ const done={g:st.g,opp:g[2],date:g[0],ks:st.ks,os:st.os,pts:{...st.pts},played:JSON.parse(JSON.stringify(st.played))};
+ const i=hist.findIndex(x=>Number(x.g)===st.g);if(i>=0)hist[i]=done;else hist.push(done);hist.sort((a,b)=>a.g-b.g);save();
+ if(st.g<S.length-1)st=fresh(st.g+1);render();save();
+};
+function renderHistory(){
+ $("record").textContent=record();const sp=seasonPoints();$("seasonPts").innerHTML=P.map(n=>`<div class="seasonP"><b>${sp[n]}</b><span>${n}</span></div>`).join("");
+ $("hist").innerHTML=hist.length?hist.map(g=>`<div class="histItem"><b>${g.date} vs ${g.opp}</b>${g.ks>g.os?"WIN":g.ks<g.os?"LOSS":"TIE"} · Knicks ${g.ks}-${g.os}</div>`).join(""):`<div class="histItem">No completed games saved yet.</div>`;
+}
+$("historyBtn").onclick=()=>{renderHistory();$("historyModal").classList.add("on")};
+$("clipBtn").onclick=()=>$("clipModal").classList.add("on");
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove("on"));
+$("exportBtn").onclick=()=>{
+ const payload={app:"Knicks Season Tracker",version:2,exportedAt:new Date().toISOString(),history:hist,live:{...st,r:false,last:null}};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`knicks-v2-season-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
+};
+$("importBtn").onclick=()=>$("file").click();
+$("file").onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.history))throw 0;if(!confirm(`Import ${d.history.length} completed game(s)?`))return;hist=d.history.map(normalizeImportedGame);save();renderHistory();render();alert("Season backup imported.");}catch{alert("That file is not a valid Knicks season backup.")}e.target.value=""};r.readAsText(f)};
+const PLAY={
+"OFFENSE":[["5-SPOT SPACING","1 top · 2 wings · 2 bigs"],["PASS → CUT → FILL","Pass, cut hard, fill open space"],["GIVE & GO","Pass · cut · return pass"],["DRIVE & KICK","Attack lane · find open teammate"],["SCREEN & ROLL","Screen · use it · roll"]],
+"DEFENSE":[["2-1-2 ZONE","2 up · 1 middle · 2 low"],["ZONE SLIDE","Five move together with the ball"],["DOUBLE-TEAM","Two to ball · others protect gaps"],["BALL IN CORNER","Low pressures · middle protects rim"],["STOP + REBOUND","Contest · box out · get ball"]],
+"TRANSITION":[["REBOUND → OUTLET","Rebound · chin it · short outlet"],["3-LANE BREAK","Left · middle · right"],["2-ON-1","Attack middle · make defender choose"],["TURNOVER → BACK","Protect basket first"],["PRESS BREAK","Short pass · meet the ball"]],
+"BLANK":[["BLANK COURT","Draw / explain anything"]]
+};
+const cats=Object.keys(PLAY);$("clipCats").innerHTML=cats.map((c,i)=>`<button class="${i?"":"on"}" data-cat="${c}">${c}</button>`).join("");
+function setCat(c){document.querySelectorAll("[data-cat]").forEach(b=>b.classList.toggle("on",b.dataset.cat===c));$("plays").innerHTML=PLAY[c].map((p,i)=>`<button class="play" data-call="${p[0]}">${p[0]}<small>${p[1]}</small></button>`).join("");document.querySelectorAll("[data-call]").forEach(b=>b.onclick=()=>$("call").textContent=b.dataset.call);$("call").textContent=PLAY[c][0][0]}
+document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>setCat(b.dataset.cat));setCat("OFFENSE");
+render();save();
+})();
+</script></body></html>
