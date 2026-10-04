@@ -1,7 +1,44 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#050505"><title>Knicks Coach V2</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050505">
+<title>Knicks Coach V2</title>
+
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}:root{--o:#F58426;--b:#0878bd;--g:#18d85b}html,body{margin:0;background:#050505;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;overflow-x:hidden}button,input{font:inherit}.app{max-width:430px;margin:auto;padding:4px}.top{display:grid;grid-template-columns:1fr 1.05fr 1fr;gap:4px}.score,.timer{height:88px;border:1px solid #343434;border-radius:9px;background:#0d0d0d;padding:5px;text-align:center;overflow:hidden}.score b{display:block;font-size:10px}.score input{width:100%;height:56px;border:0;background:transparent;color:#fff;font-size:40px;font-weight:1000;text-align:center;padding:0}.halves{display:grid;grid-template-columns:1fr 1fr;gap:3px}.half{height:24px;border:1px solid #444;border-radius:6px;background:#111;color:#aaa;font-weight:1000}.half.on{background:var(--o);color:#111;border-color:var(--o)}.clock{font-size:34px;font-weight:1000;line-height:1.05;font-variant-numeric:tabular-nums}.clockReset{height:20px;padding:0 9px;border:1px solid #555;border-radius:6px;background:#181818;color:#fff;font-size:8px;font-weight:900}.nav{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:4px;margin-top:4px}.nav button{height:35px;border:1px solid #444;border-radius:8px;background:#111;color:#fff;font-size:9px;font-weight:950}.nav #start{background:var(--o);border-color:var(--o);color:#111;font-size:12px}.gameMeta{border:1px solid #343434;border-radius:8px;background:#0d0d0d;padding:5px 8px;margin-top:4px;min-height:47px;position:relative;cursor:pointer}.gameMeta.collapsed{min-height:31px;padding:5px 8px}.gameMeta.collapsed .meta,.gameMeta.collapsed .gameNum{display:none}.gameMeta.collapsed .opp{font-size:13px}.gameChevron{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:15px}.rosterBtn{position:absolute;right:32px;top:50%;transform:translateY(-50%);height:23px;border:1px solid #555;border-radius:6px;background:#181818;color:#fff;font-size:8px;font-weight:900;padding:0 8px}.gameNum{font-size:8px;color:#aaa}.opp{font-size:16px;font-weight:1000}.meta{font-size:9px;color:#aaa;margin-top:2px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--o:#F58426;--b:#0878bd;--g:#18d85b}
+html,body{margin:0;background:#050505;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;overflow-x:hidden}
+button,input{font:inherit}
+.app{max-width:430px;margin:auto;padding:4px}
+
+.top{display:grid;grid-template-columns:1fr 1.05fr 1fr;gap:4px}
+.score,.timer{height:88px;border:1px solid #343434;border-radius:9px;background:#0d0d0d;padding:5px;text-align:center;overflow:hidden}
+.score b{display:block;font-size:10px}
+.score input{width:100%;height:56px;border:0;background:transparent;color:#fff;font-size:40px;font-weight:1000;text-align:center;padding:0}
+
+.halves{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.half{height:24px;border:1px solid #444;border-radius:6px;background:#111;color:#aaa;font-weight:1000}
+.half.on{background:var(--o);color:#111;border-color:var(--o)}
+
+.clock{font-size:34px;font-weight:1000;line-height:1.05;font-variant-numeric:tabular-nums}
+.clockReset{height:20px;padding:0 9px;border:1px solid #555;border-radius:6px;background:#181818;color:#fff;font-size:8px;font-weight:900}
+
+.nav{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:4px;margin-top:4px}
+.nav button{height:35px;border:1px solid #444;border-radius:8px;background:#111;color:#fff;font-size:9px;font-weight:950}
+.nav #start{background:var(--o);border-color:var(--o);color:#111;font-size:12px}
+
+.gameMeta{border:1px solid #343434;border-radius:8px;background:#0d0d0d;padding:5px 8px;margin-top:4px;min-height:47px;position:relative;cursor:pointer}
+.gameMeta.collapsed{min-height:31px;padding:5px 8px}
+.gameMeta.collapsed .meta,.gameMeta.collapsed .gameNum{display:none}
+.gameMeta.collapsed .opp{font-size:13px}
+.gameChevron{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:15px}
+.rosterBtn{position:absolute;right:32px;top:50%;transform:translateY(-50%);height:23px;border:1px solid #555;border-radius:6px;background:#181818;color:#fff;font-size:8px;font-weight:900;padding:0 8px}
+.gameNum{font-size:8px;color:#aaa}
+.opp{font-size:16px;font-weight:1000}
+.meta{font-size:9px;color:#aaa;margin-top:2px}
 
 /* PLAYER CARDS */
 .players{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px}
@@ -13,8 +50,7 @@ padding:5px;
 height:88px;
 min-height:88px;
 color:#aaa;
-background:linear-gradient(135deg,#353535,#252525);
-transition:background .12s,border-color .12s
+background:linear-gradient(135deg,#353535,#252525)
 }
 
 .card.off{
@@ -35,8 +71,6 @@ color:#777;
 opacity:.72
 }
 
-.nameRow{display:block;min-width:0}
-
 .name{
 font-size:18px;
 font-weight:700;
@@ -54,99 +88,1750 @@ font-style:normal;
 color:#050505
 }
 
-/* Long name stays one line */
-.card[data-card="Nhonebong"] .name{
-font-size:16px
+.card[data-card="Nhonebong"] .name{font-size:16px}
+.card.on[data-card="Nhonebong"] .name{font-size:17px}
+
+.mins{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:1px}
+.timeBtn{width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;font-size:8px}
+.timeBtn b{font-size:13px;margin-left:2px}
+.bar{height:4px;background:#0005;border-radius:99px;margin-top:2px;overflow:hidden}
+.fill{height:100%;background:#bdbdbd}
+.card.on .fill{background:#075c28}
+.minBox.met .fill{background:#fff}
+.minBox.met b{color:inherit}
+
+.bottom{display:grid;grid-template-columns:1fr 36px 36px;gap:4px;align-items:end;margin-top:2px}
+.pts{font-size:21px;font-weight:1000}
+.pts small{font-size:7px}
+.pm{height:29px;border:1px solid #ffffff55;border-radius:6px;background:#171717;color:#fff;font-size:19px;font-weight:1000}
+.pm.plus{background:#4a4a4a}
+.card.on .pm{background:#087832;border-color:#0b8e3d;color:#fff}
+.card.on .pm.plus{background:#0aa645}
+
+.absentWrap{grid-column:1/-1;border:1px solid #444;border-radius:8px;background:#111;padding:3px}
+.absentTitle{width:100%;height:27px;border:0;background:transparent;color:#ddd;text-align:left;font-size:10px}
+.absentGrid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.absentGrid.hide{display:none}
+
+.rosterList{display:grid;gap:5px;margin-top:8px}
+.rosterRow{display:flex;align-items:center;justify-content:space-between;border:1px solid #333;border-radius:8px;background:#111;padding:9px 10px}
+.rosterRow b{font-size:15px}
+.presence{height:32px;min-width:82px;border:1px solid #555;border-radius:7px;background:#173f59;color:#fff;font-size:9px;font-weight:950}
+.presence.abs{background:#333;color:#bbb}
+
+.footer{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:4px}
+.footer button{height:35px;border:1px solid #444;border-radius:7px;background:#111;color:#fff;font-size:7px;font-weight:950;padding:2px}
+.footer .history{border-color:var(--o)}
+
+.modal{position:fixed;inset:0;z-index:100;background:#050505f8;display:none;overflow:auto;padding:10px}
+.modal.on{display:block}
+.box{max-width:430px;margin:auto}
+
+.modalHead{display:flex;justify-content:space-between;align-items:center}
+.modalHead h2{margin:4px 0 8px}
+.close{height:34px;background:#111;color:#fff;border:1px solid #444;border-radius:7px;font-weight:900;padding:0 12px}
+
+.adjustBox{margin-top:25%;border:1px solid #555;border-radius:12px;background:#151515;padding:12px}
+.adjustWho{color:#bbb}
+.adjustTime{font-size:44px;font-weight:1000;text-align:center}
+.adjustReq{text-align:center;color:#aaa;font-size:11px}
+.adjustBtns,.adjustActions{display:grid;gap:4px;margin-top:10px}
+.adjustBtns{grid-template-columns:repeat(4,1fr)}
+.adjustActions{grid-template-columns:1fr 1fr}
+.adjustBtns button,.adjustActions button,.backups button{height:40px;border:1px solid #555;border-radius:7px;background:#222;color:#fff;font-size:9px;font-weight:900}
+.saveAdj{background:var(--o)!important;color:#111!important}
+
+.backups{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.record{margin:8px 0;border:1px solid #333;border-radius:9px;padding:9px;color:#aaa}
+.record b{display:block;color:var(--o);font-size:30px}
+.seasonPts{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.seasonP,.histItem{border:1px solid #292929;border-radius:7px;padding:7px;background:#0b0b0b}
+.seasonP b{font-size:20px}
+.seasonP span{float:right;color:#aaa}
+.hist{margin-top:8px;display:grid;gap:5px}
+
+/* CLIPBOARD */
+.clipCats{
+display:flex;
+gap:5px;
+overflow-x:auto;
+padding:3px 0 7px;
+scrollbar-width:none
+}
+.clipCats::-webkit-scrollbar,.plays::-webkit-scrollbar{display:none}
+
+.clipCats button{
+flex:0 0 auto;
+height:34px;
+padding:0 13px;
+border:1px solid #444;
+border-radius:7px;
+background:#111;
+color:#fff;
+font-size:8px;
+font-weight:1000
 }
 
-.card.on[data-card="Nhonebong"] .name{
-font-size:17px
+.clipCats button.on{
+background:var(--o);
+color:#111;
+border-color:var(--o)
 }
 
-.card.absent .name{
-font-style:italic
+.plays{
+display:flex;
+gap:6px;
+overflow-x:auto;
+padding-bottom:7px;
+scrollbar-width:none
 }
 
-.mins{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:1px}.timeBtn{width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;font-size:8px}.timeBtn b{font-size:13px;margin-left:2px}.bar{height:4px;background:#0005;border-radius:99px;margin-top:2px;overflow:hidden}.fill{height:100%;background:#bdbdbd}.card.on .fill{background:#075c28}.minBox.met .fill{background:#fff}.minBox.met b{color:inherit}.bottom{display:grid;grid-template-columns:1fr 36px 36px;gap:4px;align-items:end;margin-top:2px}.pts{font-size:21px;font-weight:1000}.pts small{font-size:7px}.pm{height:29px;border:1px solid #ffffff55;border-radius:6px;background:#171717;color:#fff;font-size:19px;font-weight:1000}.pm.plus{background:#4a4a4a}.card.on .pm{background:#087832;border-color:#0b8e3d;color:#fff}.card.on .pm.plus{background:#0aa645}
+.play{
+flex:0 0 145px;
+min-height:53px;
+text-align:left;
+padding:7px;
+border:1px solid #333;
+border-radius:7px;
+background:#111;
+color:#fff;
+font-size:10px;
+font-weight:1000
+}
 
-.absentWrap{grid-column:1/-1;border:1px solid #444;border-radius:8px;background:#111;padding:3px}.absentTitle{width:100%;height:27px;border:0;background:transparent;color:#ddd;text-align:left;font-size:10px}.absentGrid{display:grid;grid-template-columns:1fr 1fr;gap:4px}.absentGrid.hide{display:none}.rosterList{display:grid;gap:5px;margin-top:8px}.rosterRow{display:flex;align-items:center;justify-content:space-between;border:1px solid #333;border-radius:8px;background:#111;padding:9px 10px}.rosterRow b{font-size:15px}.presence{height:32px;min-width:82px;border:1px solid #555;border-radius:7px;background:#173f59;color:#fff;font-size:9px;font-weight:950}.presence.abs{background:#333;color:#bbb}.footer{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:4px}.footer button{height:35px;border:1px solid #444;border-radius:7px;background:#111;color:#fff;font-size:7px;font-weight:950;padding:2px}.footer .history{border-color:var(--o)}.modal{position:fixed;inset:0;z-index:100;background:#050505f5;display:none;overflow:auto;padding:10px}.modal.on{display:block}.box{max-width:430px;margin:auto}.modalHead{display:flex;justify-content:space-between;align-items:center}.modalHead h2{margin:4px 0 8px}.close{height:34px;background:#111;color:#fff;border:1px solid #444;border-radius:7px;font-weight:900}.adjustBox{margin-top:25%;border:1px solid #555;border-radius:12px;background:#151515;padding:12px}.adjustWho{color:#bbb}.adjustTime{font-size:44px;font-weight:1000;text-align:center}.adjustReq{text-align:center;color:#aaa;font-size:11px}.adjustBtns,.adjustActions{display:grid;gap:4px;margin-top:10px}.adjustBtns{grid-template-columns:repeat(4,1fr)}.adjustActions{grid-template-columns:1fr 1fr}.adjustBtns button,.adjustActions button,.backups button{height:40px;border:1px solid #555;border-radius:7px;background:#222;color:#fff;font-size:9px;font-weight:900}.saveAdj{background:var(--o)!important;color:#111!important}.backups{display:grid;grid-template-columns:1fr 1fr;gap:5px}.record{margin:8px 0;border:1px solid #333;border-radius:9px;padding:9px;color:#aaa}.record b{display:block;color:var(--o);font-size:30px}.seasonPts{display:grid;grid-template-columns:1fr 1fr;gap:4px}.seasonP,.histItem{border:1px solid #292929;border-radius:7px;padding:7px;background:#0b0b0b}.seasonP b{font-size:20px}.seasonP span{float:right;color:#aaa}.hist{margin-top:8px;display:grid;gap:5px}.clipCats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.clipCats button,.play{background:#111;color:#fff;border:1px solid #333;border-radius:7px}.clipCats button{height:34px;font-size:8px;font-weight:900}.plays{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.play{min-height:50px;text-align:left;padding:7px;font-size:10px;font-weight:900}.play small{display:block;color:#999}.court{margin-top:8px;aspect-ratio:1/1;background:#eef4f8;border-radius:9px;position:relative}.call{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:24px;font-weight:1000;color:#111}@media(max-height:760px){.score,.timer{height:88px}.score input{height:49px;font-size:36px}.clock{font-size:31px}.card{height:88px;min-height:88px;padding:4px}.name{font-size:17px}.card.on .name{font-size:18px}.card[data-card="Nhonebong"] .name{font-size:15px}.card.on[data-card="Nhonebong"] .name{font-size:16px}.footer button{height:32px}}
-</style></head><body><div class="app">
-<div class="top"><div class="score"><b>KNICKS</b><input id="ks" type="number" min="0"></div><div class="timer"><div class="halves"><button class="half on" data-half="0">1H</button><button class="half" data-half="1">2H</button></div><div class="clock" id="clock">20:00</div><button id="resetClock" class="clockReset">↻ RESET</button></div><div class="score"><b>OPPONENT</b><input id="os" type="number" min="0"></div></div>
-<div class="nav"><button id="prevGame">◀ PREV GAME</button><button id="start">START</button><button id="nextGame">NEXT GAME ▶</button></div><div class="gameMeta" id="gameMeta"><div class="gameNum" id="gameNum"></div><div class="opp" id="opp"></div><div class="meta" id="meta"></div><button class="rosterBtn" id="rosterBtn">ROSTER</button><span class="gameChevron" id="gameChevron">⌃</span></div><div class="players" id="players"></div><div class="footer"><button id="endGame">END GAME</button><button class="history" id="historyBtn">SEASON HISTORY</button><button id="resetGame">RESET GAME</button><button id="clipBtn">📋 CLIPBOARD</button></div></div>
-<div class="modal" id="rosterModal"><div class="box"><div class="modalHead"><h2>Roster</h2><button class="close" data-close="rosterModal">DONE</button></div><div style="color:#999;font-size:11px">Mark players absent before the game.</div><div class="rosterList" id="rosterList"></div></div></div><div class="modal" id="adjustModal"><div class="box"><div class="adjustBox"><div class="modalHead"><h2>Adjust Minutes</h2><button class="close" data-close="adjustModal">✕</button></div><div id="adjustWho" class="adjustWho"></div><div id="adjustTime" class="adjustTime">0:00</div><div class="adjustReq">5:00 required this half</div><div class="adjustBtns"><button data-adj="-60">−1:00</button><button data-adj="-10">−0:10</button><button data-adj="10">+0:10</button><button data-adj="60">+1:00</button></div><div class="adjustActions"><button data-close="adjustModal">CANCEL</button><button id="saveAdj" class="saveAdj">SAVE</button></div></div></div></div>
-<div class="modal" id="historyModal"><div class="box"><div class="modalHead"><h2>Season History</h2><button class="close" data-close="historyModal">CLOSE</button></div><div class="backups"><button id="exportBtn">EXPORT SEASON BACKUP</button><button id="importBtn">IMPORT SEASON BACKUP</button></div><input id="file" type="file" accept=".json,application/json" hidden><div class="record">SEASON RECORD <b id="record">0–0</b></div><div class="seasonPts" id="seasonPts"></div><div class="hist" id="hist"></div></div></div>
-<div class="modal" id="clipModal"><div class="box"><div class="modalHead"><h2>Clipboard</h2><button class="close" data-close="clipModal">CLOSE</button></div><div class="clipCats" id="clipCats"></div><div class="plays" id="plays"></div><div class="court"><div class="call" id="call">5-SPOT SPACING</div></div></div></div>
+.play small{
+display:block;
+color:#999;
+font-size:8px;
+margin-top:3px;
+line-height:1.2
+}
+
+.play.selected{
+border-color:var(--o);
+box-shadow:inset 0 0 0 1px var(--o)
+}
+
+.playTitle{font-size:20px;font-weight:1000;margin:3px 0 2px}
+.playSub{font-size:10px;color:#aaa;margin-bottom:7px}
+
+.court{
+aspect-ratio:1/1;
+background:#e6b168;
+border-radius:10px;
+position:relative;
+overflow:hidden;
+border:2px solid #eee
+}
+
+.diagram{width:100%;height:100%;display:block}
+.courtLine{fill:none;stroke:#222;stroke-width:3}
+
+.move{
+fill:none;
+stroke:#e3391c;
+stroke-width:7;
+stroke-linecap:round;
+stroke-linejoin:round
+}
+
+.pass{
+fill:none;
+stroke:#e3391c;
+stroke-width:5;
+stroke-dasharray:12 9;
+stroke-linecap:round
+}
+
+.kidHead{fill:#a76b43;stroke:#111;stroke-width:2}
+.kidBody{fill:#fff;stroke:#111;stroke-width:3}
+.kidShorts{fill:#F58426;stroke:#111;stroke-width:2}
+.kidLimb{stroke:#111;stroke-width:6;stroke-linecap:round}
+
+.jersey{
+font-size:14px;
+font-weight:1000;
+text-anchor:middle;
+dominant-baseline:middle;
+fill:#111
+}
+
+.defBody{fill:#222;stroke:#111;stroke-width:3}
+.defShorts{fill:#555;stroke:#111;stroke-width:2}
+
+.defText{
+fill:#fff;
+font-size:13px;
+font-weight:1000;
+text-anchor:middle;
+dominant-baseline:middle
+}
+
+.ball{fill:#F58426;stroke:#111;stroke-width:2}
+
+.diagramLabel{
+fill:#111;
+font-size:14px;
+font-weight:1000;
+text-anchor:middle
+}
+
+.keyBox{
+margin-top:7px;
+border:1px solid #333;
+border-radius:9px;
+background:#101010;
+padding:9px
+}
+
+.keyBox h3{
+margin:0 0 5px;
+font-size:13px;
+color:var(--o)
+}
+
+.keyBox ul{
+margin:0;
+padding-left:17px;
+color:#ddd;
+font-size:11px;
+line-height:1.5
+}
+
+@media(max-height:760px){
+.score,.timer{height:88px}
+.score input{height:49px;font-size:36px}
+.clock{font-size:31px}
+.card{height:88px;min-height:88px;padding:4px}
+.name{font-size:17px}
+.card.on .name{font-size:18px}
+.card[data-card="Nhonebong"] .name{font-size:15px}
+.card.on[data-card="Nhonebong"] .name{font-size:16px}
+.footer button{height:32px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="top">
+<div class="score"><b>KNICKS</b><input id="ks" type="number" min="0"></div>
+
+<div class="timer">
+<div class="halves">
+<button class="half on" data-half="0">1H</button>
+<button class="half" data-half="1">2H</button>
+</div>
+<div class="clock" id="clock">20:00</div>
+<button id="resetClock" class="clockReset">↻ RESET</button>
+</div>
+
+<div class="score"><b>OPPONENT</b><input id="os" type="number" min="0"></div>
+</div>
+
+<div class="nav">
+<button id="prevGame">◀ PREV GAME</button>
+<button id="start">START</button>
+<button id="nextGame">NEXT GAME ▶</button>
+</div>
+
+<div class="gameMeta" id="gameMeta">
+<div class="gameNum" id="gameNum"></div>
+<div class="opp" id="opp"></div>
+<div class="meta" id="meta"></div>
+<button class="rosterBtn" id="rosterBtn">ROSTER</button>
+<span class="gameChevron" id="gameChevron">⌃</span>
+</div>
+
+<div class="players" id="players"></div>
+
+<div class="footer">
+<button id="endGame">END GAME</button>
+<button class="history" id="historyBtn">SEASON HISTORY</button>
+<button id="resetGame">RESET GAME</button>
+<button id="clipBtn">📋 CLIPBOARD</button>
+</div>
+
+</div>
+
+<div class="modal" id="rosterModal">
+<div class="box">
+<div class="modalHead">
+<h2>Roster</h2>
+<button class="close" data-close="rosterModal">DONE</button>
+</div>
+<div style="color:#999;font-size:11px">Mark players absent before the game.</div>
+<div class="rosterList" id="rosterList"></div>
+</div>
+</div>
+
+<div class="modal" id="adjustModal">
+<div class="box">
+<div class="adjustBox">
+<div class="modalHead">
+<h2>Adjust Minutes</h2>
+<button class="close" data-close="adjustModal">✕</button>
+</div>
+<div id="adjustWho" class="adjustWho"></div>
+<div id="adjustTime" class="adjustTime">0:00</div>
+<div class="adjustReq">5:00 required this half</div>
+<div class="adjustBtns">
+<button data-adj="-60">−1:00</button>
+<button data-adj="-10">−0:10</button>
+<button data-adj="10">+0:10</button>
+<button data-adj="60">+1:00</button>
+</div>
+<div class="adjustActions">
+<button data-close="adjustModal">CANCEL</button>
+<button id="saveAdj" class="saveAdj">SAVE</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="historyModal">
+<div class="box">
+<div class="modalHead">
+<h2>Season History</h2>
+<button class="close" data-close="historyModal">CLOSE</button>
+</div>
+<div class="backups">
+<button id="exportBtn">EXPORT SEASON BACKUP</button>
+<button id="importBtn">IMPORT SEASON BACKUP</button>
+</div>
+<input id="file" type="file" accept=".json,application/json" hidden>
+<div class="record">SEASON RECORD <b id="record">0–0</b></div>
+<div class="seasonPts" id="seasonPts"></div>
+<div class="hist" id="hist"></div>
+</div>
+</div>
+
+<!-- EXPANDED CLIPBOARD -->
+<div class="modal" id="clipModal">
+<div class="box">
+
+<div class="modalHead">
+<h2>Clipboard</h2>
+<button class="close" data-close="clipModal">CLOSE</button>
+</div>
+
+<div class="clipCats" id="clipCats"></div>
+<div class="plays" id="plays"></div>
+
+<div class="playTitle" id="playTitle"></div>
+<div class="playSub" id="playSub"></div>
+
+<div class="court">
+<div id="call"></div>
+</div>
+
+<div class="keyBox">
+<h3>COACHING POINTS</h3>
+<ul id="keyPoints"></ul>
+</div>
+
+</div>
+</div>
+
 <script>
-(()=>{const $=id=>document.getElementById(id),P=["Zane","Jonah","Vivaan","Krew","Nhonebong","Max","Niam","Justin","Sidarth","Ethan"],S=[["Sun 9/6","12 PM","D1 White","HOME","Court 03"],["Sun 9/20","3 PM","Collinsville Pirates","HOME","Court 01"],["Sun 9/27","12 PM","Collinsville Pirates","AWAY","Court 01"],["Sun 10/4","12 PM","Prosper Elite","AWAY","Court 03"],["Sat 10/17","3 PM","One J Blue","HOME","Court 03"],["Sat 10/24","9 AM","Wolfpack","HOME","Court 03"],["Sat 10/31","3 PM","D1 White","AWAY","Court 03"],["Sun 11/8","1 PM","Jags","AWAY","Court 04"]],K="knicks_v2_live_v2",H="knicks_v2_history";
-const fresh=g=>({g,half:0,rem:[1200,1200],r:false,last:null,ks:0,os:0,status:Object.fromEntries(P.map(n=>[n,"off"])),played:Object.fromEntries(P.map(n=>[n,[0,0]])),pts:Object.fromEntries(P.map(n=>[n,0]))}),load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}},fmt=s=>`${Math.floor(Math.max(0,s)/60)}:${String(Math.floor(Math.max(0,s)%60)).padStart(2,"0")}`;let hist=Array.isArray(load(H))?load(H):[],st=load(K)||fresh(3),absOpen=false,adj=null,metaCollapsed=false;st.status??={};st.played??={};st.pts??={};P.forEach(n=>{st.status[n]??="off";st.played[n]??=[0,0];st.pts[n]??=0});
+(()=>{
 
-/* If old saved state somehow has more than 5 active players, keep only first 5 */
+const $=id=>document.getElementById(id);
+
+const P=[
+"Zane","Jonah","Vivaan","Krew","Nhonebong",
+"Max","Niam","Justin","Sidarth","Ethan"
+];
+
+const S=[
+["Sun 9/6","12 PM","D1 White","HOME","Court 03"],
+["Sun 9/20","3 PM","Collinsville Pirates","HOME","Court 01"],
+["Sun 9/27","12 PM","Collinsville Pirates","AWAY","Court 01"],
+["Sun 10/4","12 PM","Prosper Elite","AWAY","Court 03"],
+["Sat 10/17","3 PM","One J Blue","HOME","Court 03"],
+["Sat 10/24","9 AM","Wolfpack","HOME","Court 03"],
+["Sat 10/31","3 PM","D1 White","AWAY","Court 03"],
+["Sun 11/8","1 PM","Jags","AWAY","Court 04"]
+];
+
+const K="knicks_v2_live_v2";
+const H="knicks_v2_history";
+
+const fresh=g=>({
+g,
+half:0,
+rem:[1200,1200],
+r:false,
+last:null,
+ks:0,
+os:0,
+status:Object.fromEntries(P.map(n=>[n,"off"])),
+played:Object.fromEntries(P.map(n=>[n,[0,0]])),
+pts:Object.fromEntries(P.map(n=>[n,0]))
+});
+
+const load=k=>{
+try{return JSON.parse(localStorage.getItem(k))}
+catch{return null}
+};
+
+const fmt=s=>
+`${Math.floor(Math.max(0,s)/60)}:${String(Math.floor(Math.max(0,s)%60)).padStart(2,"0")}`;
+
+let hist=Array.isArray(load(H))?load(H):[];
+let st=load(K)||fresh(3);
+
+let absOpen=false;
+let adj=null;
+let metaCollapsed=false;
+
+st.status??={};
+st.played??={};
+st.pts??={};
+
+P.forEach(n=>{
+st.status[n]??="off";
+st.played[n]??=[0,0];
+st.pts[n]??=0
+});
+
+/* MAX FIVE ACTIVE */
 let initialOn=P.filter(n=>st.status[n]==="on");
 initialOn.slice(5).forEach(n=>st.status[n]="off");
 
-function save(){localStorage.setItem(K,JSON.stringify({...st,r:false,last:null}));localStorage.setItem(H,JSON.stringify(hist))}
-function norm(g){let played=Object.fromEntries(P.map(n=>[n,[0,0]]));P.forEach(n=>{let x=g?.played?.[n];if(Array.isArray(x))played[n]=x.length>=4?[+(x[0]||0)+ +(x[1]||0),+(x[2]||0)+ +(x[3]||0)]:[+(x[0]||0),+(x[1]||0)]});return{g:+(g?.g||0),opp:g?.opp||S[+(g?.g||0)]?.[2]||"Opponent",date:g?.date||S[+(g?.g||0)]?.[0]||"Game",ks:+(g?.ks||0),os:+(g?.os||0),pts:Object.fromEntries(P.map(n=>[n,+(g?.pts?.[n]||0)])),played}}
-function card(n){let p=st.played[n],s=st.status[n],m0=p[0]>=300,m1=p[1]>=300;return `<div class="card ${s}" data-card="${n}"><div class="nameRow"><div class="name">${n}</div></div><div class="bottom"><div class="pts">${st.pts[n]} <small>PTS</small></div><button class="pm" data-minus="${n}">−</button><button class="pm plus" data-plus="${n}">+</button></div><div class="mins"><div class="minBox ${m0?"met":""}"><button class="timeBtn" data-time="${n}" data-h="0">1H <b>${fmt(p[0])}</b></button><div class="bar"><div class="fill" style="width:${Math.min(100,p[0]/3)}%"></div></div></div><div class="minBox ${m1?"met":""}"><button class="timeBtn" data-time="${n}" data-h="1">2H <b>${fmt(p[1])}</b></button><div class="bar"><div class="fill" style="width:${Math.min(100,p[1]/3)}%"></div></div></div></div></div>`}
+function save(){
+localStorage.setItem(K,JSON.stringify({...st,r:false,last:null}));
+localStorage.setItem(H,JSON.stringify(hist))
+}
+
+function norm(g){
+
+let played=Object.fromEntries(P.map(n=>[n,[0,0]]));
+
+P.forEach(n=>{
+let x=g?.played?.[n];
+
+if(Array.isArray(x))
+played[n]=x.length>=4
+?[+(x[0]||0)+ +(x[1]||0),+(x[2]||0)+ +(x[3]||0)]
+:[+(x[0]||0),+(x[1]||0)]
+});
+
+return{
+g:+(g?.g||0),
+opp:g?.opp||S[+(g?.g||0)]?.[2]||"Opponent",
+date:g?.date||S[+(g?.g||0)]?.[0]||"Game",
+ks:+(g?.ks||0),
+os:+(g?.os||0),
+pts:Object.fromEntries(P.map(n=>[n,+(g?.pts?.[n]||0)])),
+played
+}
+}
+
+function card(n){
+
+let p=st.played[n];
+let s=st.status[n];
+let m0=p[0]>=300;
+let m1=p[1]>=300;
+
+return `
+<div class="card ${s}" data-card="${n}">
+<div class="name">${n}</div>
+
+<div class="bottom">
+<div class="pts">${st.pts[n]} <small>PTS</small></div>
+<button class="pm" data-minus="${n}">−</button>
+<button class="pm plus" data-plus="${n}">+</button>
+</div>
+
+<div class="mins">
+
+<div class="minBox ${m0?"met":""}">
+<button class="timeBtn" data-time="${n}" data-h="0">
+1H <b>${fmt(p[0])}</b>
+</button>
+<div class="bar">
+<div class="fill" style="width:${Math.min(100,p[0]/3)}%"></div>
+</div>
+</div>
+
+<div class="minBox ${m1?"met":""}">
+<button class="timeBtn" data-time="${n}" data-h="1">
+2H <b>${fmt(p[1])}</b>
+</button>
+<div class="bar">
+<div class="fill" style="width:${Math.min(100,p[1]/3)}%"></div>
+</div>
+</div>
+
+</div>
+</div>
+`;
+}
 
 function bind(){
+
 document.querySelectorAll("[data-card]").forEach(c=>c.onclick=e=>{
+
 if(e.target.closest("button"))return;
+
 let n=c.dataset.card;
+
 if(st.status[n]==="absent")return;
 
 if(st.status[n]==="on"){
 st.status[n]="off";
 }else{
+
 let onCount=P.filter(x=>st.status[x]==="on").length;
+
 if(onCount>=5)return;
+
 st.status[n]="on";
+}
+
+render();
+save();
+});
+
+document.querySelectorAll("[data-plus]").forEach(b=>b.onclick=e=>{
+e.stopPropagation();
+st.pts[b.dataset.plus]++;
+st.ks++;
+render();
+save()
+});
+
+document.querySelectorAll("[data-minus]").forEach(b=>b.onclick=e=>{
+e.stopPropagation();
+
+let n=b.dataset.minus;
+
+if(st.pts[n]>0){
+st.pts[n]--;
+st.ks=Math.max(0,st.ks-1)
 }
 
 render();
 save()
 });
 
-document.querySelectorAll("[data-plus]").forEach(b=>b.onclick=e=>{e.stopPropagation();st.pts[b.dataset.plus]++;st.ks++;render();save()});
-document.querySelectorAll("[data-minus]").forEach(b=>b.onclick=e=>{e.stopPropagation();let n=b.dataset.minus;if(st.pts[n]>0){st.pts[n]--;st.ks=Math.max(0,st.ks-1)}render();save()});
-document.querySelectorAll("[data-time]").forEach(b=>b.onclick=e=>{e.stopPropagation();let n=b.dataset.time,h=+b.dataset.h;adj={n,h,val:st.played[n][h]};$("adjustWho").textContent=`${n} — ${h?"2nd":"1st"} Half`;$("adjustTime").textContent=fmt(adj.val);$("adjustModal").classList.add("on")})
+document.querySelectorAll("[data-time]").forEach(b=>b.onclick=e=>{
+e.stopPropagation();
+
+let n=b.dataset.time;
+let h=+b.dataset.h;
+
+adj={n,h,val:st.played[n][h]};
+
+$("adjustWho").textContent=`${n} — ${h?"2nd":"1st"} Half`;
+$("adjustTime").textContent=fmt(adj.val);
+$("adjustModal").classList.add("on")
+})
 }
 
 function render(){
+
 let g=S[st.g]||S[0];
+
 $("gameNum").textContent=`Game ${st.g+1} of ${S.length}`;
 $("opp").textContent=g[2];
 $("meta").textContent=`${g[0]} · ${g[1]} · ${g[3]} · ${g[4]}`;
+
 $("clock").textContent=fmt(st.rem[st.half]);
 $("ks").value=st.ks;
 $("os").value=st.os;
 $("start").textContent=st.r?"PAUSE":"START";
 
-document.querySelectorAll(".half").forEach(b=>b.classList.toggle("on",+b.dataset.half===st.half));
+document.querySelectorAll(".half").forEach(b=>
+b.classList.toggle("on",+b.dataset.half===st.half)
+);
 
-/* ACTIVE PLAYERS ALWAYS FIRST */
+/* ACTIVE PLAYERS FIRST */
 let active=P.filter(n=>st.status[n]==="on");
 let bench=P.filter(n=>st.status[n]==="off");
 let absent=P.filter(n=>st.status[n]==="absent");
 
-let ordered=[...active,...bench];
-
 $("players").innerHTML=
-ordered.map(card).join("")+
-(absent.length?`<div class="absentWrap"><button class="absentTitle" id="absToggle">Absent Players (${absent.length}) ${absOpen?"▲":"▼"}</button><div class="absentGrid ${absOpen?"":"hide"}">${absent.map(n=>`<div class="card absent" data-card="${n}"><div class="name">${n}</div></div>`).join("")}</div></div>`:"");
+[...active,...bench].map(card).join("")+
+(absent.length
+?`<div class="absentWrap">
+<button class="absentTitle" id="absToggle">
+Absent Players (${absent.length}) ${absOpen?"▲":"▼"}
+</button>
+<div class="absentGrid ${absOpen?"":"hide"}">
+${absent.map(n=>`
+<div class="card absent">
+<div class="name">${n}</div>
+</div>`).join("")}
+</div>
+</div>`
+:"");
 
-if($("absToggle"))$("absToggle").onclick=()=>{absOpen=!absOpen;render()};
+if($("absToggle"))
+$("absToggle").onclick=()=>{
+absOpen=!absOpen;
+render()
+};
+
 bind()
 }
 
-function renderRoster(){$("rosterList").innerHTML=P.map(n=>`<div class="rosterRow"><b>${n}</b><button class="presence ${st.status[n]==="absent"?"abs":""}" data-presence="${n}">${st.status[n]==="absent"?"ABSENT":"PRESENT"}</button></div>`).join("");document.querySelectorAll("[data-presence]").forEach(b=>b.onclick=()=>{let n=b.dataset.presence;st.status[n]=st.status[n]==="absent"?"off":"absent";renderRoster();render();save()})}
-$("rosterBtn").onclick=e=>{e.stopPropagation();renderRoster();$("rosterModal").classList.add("on")};
-$("gameMeta").onclick=e=>{if(e.target.closest("button"))return;metaCollapsed=!metaCollapsed;$("gameMeta").classList.toggle("collapsed",metaCollapsed);$("gameChevron").textContent=metaCollapsed?"⌄":"⌃"};
-function tick(){if(!st.r)return;let now=Date.now(),e=Math.floor((now-st.last)/1000);if(e<1)return;let d=Math.min(e,st.rem[st.half]);st.rem[st.half]-=d;P.forEach(n=>{if(st.status[n]==="on")st.played[n][st.half]+=d});st.last+=d*1000;if(st.rem[st.half]<=0)st.r=false;render();save()}setInterval(tick,250);
-$("start").onclick=()=>{st.r=!st.r;st.last=st.r?Date.now():null;render();save()};document.querySelectorAll(".half").forEach(b=>b.onclick=()=>{st.r=false;st.half=+b.dataset.half;render();save()});$("resetClock").onclick=()=>{if(confirm(`Reset ${st.half?"2H":"1H"} clock to 20:00? Player minutes stay recorded.`)){st.r=false;st.rem[st.half]=1200;render();save()}};$("ks").oninput=e=>{st.ks=Math.max(0,+e.target.value||0);save()};$("os").oninput=e=>{st.os=Math.max(0,+e.target.value||0);save()};$("prevGame").onclick=()=>{if(st.g>0&&confirm("Go to previous game? Unsaved current-game changes will reset.")){st=fresh(st.g-1);render();save()}};$("nextGame").onclick=()=>{if(st.g<S.length-1&&confirm("Go to next game? Unsaved current-game changes will reset.")){st=fresh(st.g+1);render();save()}};
-document.querySelectorAll("[data-adj]").forEach(b=>b.onclick=()=>{if(adj){adj.val=Math.max(0,Math.min(1200,adj.val+(+b.dataset.adj)));$("adjustTime").textContent=fmt(adj.val)}});$("saveAdj").onclick=()=>{if(adj){st.played[adj.n][adj.h]=adj.val;save();render();$("adjustModal").classList.remove("on");adj=null}};document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove("on"));
-$("resetGame").onclick=()=>{if(confirm("Reset CURRENT game? Saved season history stays.")){st=fresh(st.g);render();save()}};$("endGame").onclick=()=>{st.r=false;let g=S[st.g];if(!confirm(`END GAME?\n${g[0]} vs ${g[2]}\nFinal: Knicks ${st.ks}-${st.os}`))return;let done={g:st.g,opp:g[2],date:g[0],ks:st.ks,os:st.os,pts:{...st.pts},played:JSON.parse(JSON.stringify(st.played))},i=hist.findIndex(x=>+x.g===st.g);i>=0?hist[i]=done:hist.push(done);hist.sort((a,b)=>a.g-b.g);save();if(st.g<S.length-1)st=fresh(st.g+1);render();save()};
-function sp(){let o=Object.fromEntries(P.map(n=>[n,0]));hist.forEach(g=>P.forEach(n=>o[n]+=+(g.pts?.[n]||0)));return o}function rec(){let w=0,l=0;hist.forEach(g=>{if(g.ks>g.os)w++;else if(g.ks<g.os)l++});return `${w}–${l}`}function rh(){$("record").textContent=rec();let x=sp();$("seasonPts").innerHTML=P.map(n=>`<div class="seasonP"><b>${x[n]}</b><span>${n}</span></div>`).join("");$("hist").innerHTML=hist.length?hist.map(g=>`<div class="histItem"><b>${g.date} vs ${g.opp}</b>${g.ks>g.os?"WIN":g.ks<g.os?"LOSS":"TIE"} · Knicks ${g.ks}-${g.os}</div>`).join(""):`<div class="histItem">No completed games saved yet.</div>`}$("historyBtn").onclick=()=>{rh();$("historyModal").classList.add("on")};$("exportBtn").onclick=()=>{let payload={app:"Knicks Season Tracker",version:2,exportedAt:new Date().toISOString(),history:hist,live:{...st,r:false,last:null}},blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`knicks-v2-season-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};$("importBtn").onclick=()=>$("file").click();$("file").onchange=e=>{let f=e.target.files?.[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.history))throw 0;if(!confirm(`Import ${d.history.length} completed game(s)?`))return;hist=d.history.map(norm);save();rh();render();alert("Season backup imported.")}catch{alert("That file is not a valid Knicks season backup.")}e.target.value=""};r.readAsText(f)};
+function renderRoster(){
 
-/* EXISTING CLIPBOARD — unchanged for this rollout */
-const PLAY={"OFFENSE":[["5-SPOT SPACING","1 top · 2 wings · 2 bigs"],["PASS → CUT → FILL","Pass, cut hard, fill open space"],["GIVE & GO","Pass · cut · return pass"]],"DEFENSE":[["2-1-2 ZONE","2 up · 1 middle · 2 low"],["ZONE SLIDE","Five move together with the ball"],["DOUBLE-TEAM","Two to ball · others protect gaps"]],"TRANSITION":[["REBOUND → OUTLET","Rebound · chin it · short outlet"],["3-LANE BREAK","Left · middle · right"],["2-ON-1","Attack middle · make defender choose"]],"BLANK":[["BLANK COURT","Draw / explain anything"]]};let cats=Object.keys(PLAY);$("clipCats").innerHTML=cats.map((c,i)=>`<button class="${i?"":"on"}" data-cat="${c}">${c}</button>`).join("");function setCat(c){document.querySelectorAll("[data-cat]").forEach(b=>b.classList.toggle("on",b.dataset.cat===c));$("plays").innerHTML=PLAY[c].map(p=>`<button class="play" data-call="${p[0]}">${p[0]}<small>${p[1]}</small></button>`).join("");document.querySelectorAll("[data-call]").forEach(b=>b.onclick=()=>$("call").textContent=b.dataset.call);$("call").textContent=PLAY[c][0][0]}document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>setCat(b.dataset.cat));setCat("OFFENSE");$("clipBtn").onclick=()=>$("clipModal").classList.add("on");render();save()})();
-</script></body></html>
+$("rosterList").innerHTML=P.map(n=>`
+<div class="rosterRow">
+<b>${n}</b>
+<button class="presence ${st.status[n]==="absent"?"abs":""}" data-presence="${n}">
+${st.status[n]==="absent"?"ABSENT":"PRESENT"}
+</button>
+</div>
+`).join("");
+
+document.querySelectorAll("[data-presence]").forEach(b=>b.onclick=()=>{
+
+let n=b.dataset.presence;
+
+st.status[n]=st.status[n]==="absent"?"off":"absent";
+
+renderRoster();
+render();
+save()
+})
+}
+
+$("rosterBtn").onclick=e=>{
+e.stopPropagation();
+renderRoster();
+$("rosterModal").classList.add("on")
+};
+
+$("gameMeta").onclick=e=>{
+
+if(e.target.closest("button"))return;
+
+metaCollapsed=!metaCollapsed;
+
+$("gameMeta").classList.toggle("collapsed",metaCollapsed);
+$("gameChevron").textContent=metaCollapsed?"⌄":"⌃"
+};
+
+function tick(){
+
+if(!st.r)return;
+
+let now=Date.now();
+let e=Math.floor((now-st.last)/1000);
+
+if(e<1)return;
+
+let d=Math.min(e,st.rem[st.half]);
+
+st.rem[st.half]-=d;
+
+P.forEach(n=>{
+if(st.status[n]==="on")
+st.played[n][st.half]+=d
+});
+
+st.last+=d*1000;
+
+if(st.rem[st.half]<=0)
+st.r=false;
+
+render();
+save()
+}
+
+setInterval(tick,250);
+
+$("start").onclick=()=>{
+st.r=!st.r;
+st.last=st.r?Date.now():null;
+render();
+save()
+};
+
+document.querySelectorAll(".half").forEach(b=>b.onclick=()=>{
+st.r=false;
+st.half=+b.dataset.half;
+render();
+save()
+});
+
+$("resetClock").onclick=()=>{
+
+if(confirm(`Reset ${st.half?"2H":"1H"} clock to 20:00? Player minutes stay recorded.`)){
+st.r=false;
+st.rem[st.half]=1200;
+render();
+save()
+}
+};
+
+$("ks").oninput=e=>{
+st.ks=Math.max(0,+e.target.value||0);
+save()
+};
+
+$("os").oninput=e=>{
+st.os=Math.max(0,+e.target.value||0);
+save()
+};
+
+$("prevGame").onclick=()=>{
+
+if(st.g>0&&confirm("Go to previous game? Unsaved current-game changes will reset.")){
+st=fresh(st.g-1);
+render();
+save()
+}
+};
+
+$("nextGame").onclick=()=>{
+
+if(st.g<S.length-1&&confirm("Go to next game? Unsaved current-game changes will reset.")){
+st=fresh(st.g+1);
+render();
+save()
+}
+};
+
+document.querySelectorAll("[data-adj]").forEach(b=>b.onclick=()=>{
+
+if(adj){
+adj.val=Math.max(0,Math.min(1200,adj.val+(+b.dataset.adj)));
+$("adjustTime").textContent=fmt(adj.val)
+}
+});
+
+$("saveAdj").onclick=()=>{
+
+if(adj){
+
+st.played[adj.n][adj.h]=adj.val;
+
+save();
+render();
+
+$("adjustModal").classList.remove("on");
+adj=null
+}
+};
+
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>
+$(b.dataset.close).classList.remove("on")
+);
+
+$("resetGame").onclick=()=>{
+
+if(confirm("Reset CURRENT game? Saved season history stays.")){
+st=fresh(st.g);
+render();
+save()
+}
+};
+
+$("endGame").onclick=()=>{
+
+st.r=false;
+
+let g=S[st.g];
+
+if(!confirm(`END GAME?
+${g[0]} vs ${g[2]}
+Final: Knicks ${st.ks}-${st.os}`))return;
+
+let done={
+g:st.g,
+opp:g[2],
+date:g[0],
+ks:st.ks,
+os:st.os,
+pts:{...st.pts},
+played:JSON.parse(JSON.stringify(st.played))
+};
+
+let i=hist.findIndex(x=>+x.g===st.g);
+
+i>=0?hist[i]=done:hist.push(done);
+
+hist.sort((a,b)=>a.g-b.g);
+
+save();
+
+if(st.g<S.length-1)
+st=fresh(st.g+1);
+
+render();
+save()
+};
+
+function sp(){
+
+let o=Object.fromEntries(P.map(n=>[n,0]));
+
+hist.forEach(g=>
+P.forEach(n=>
+o[n]+=+(g.pts?.[n]||0)
+)
+);
+
+return o
+}
+
+function rec(){
+
+let w=0,l=0;
+
+hist.forEach(g=>{
+if(g.ks>g.os)w++;
+else if(g.ks<g.os)l++
+});
+
+return `${w}–${l}`
+}
+
+function rh(){
+
+$("record").textContent=rec();
+
+let x=sp();
+
+$("seasonPts").innerHTML=P.map(n=>`
+<div class="seasonP">
+<b>${x[n]}</b>
+<span>${n}</span>
+</div>
+`).join("");
+
+$("hist").innerHTML=hist.length
+?hist.map(g=>`
+<div class="histItem">
+<b>${g.date} vs ${g.opp}</b>
+${g.ks>g.os?"WIN":g.ks<g.os?"LOSS":"TIE"} · Knicks ${g.ks}-${g.os}
+</div>
+`).join("")
+:`<div class="histItem">No completed games saved yet.</div>`
+}
+
+$("historyBtn").onclick=()=>{
+rh();
+$("historyModal").classList.add("on")
+};
+
+$("exportBtn").onclick=()=>{
+
+let payload={
+app:"Knicks Season Tracker",
+version:2,
+exportedAt:new Date().toISOString(),
+history:hist,
+live:{...st,r:false,last:null}
+};
+
+let blob=new Blob(
+[JSON.stringify(payload,null,2)],
+{type:"application/json"}
+);
+
+let u=URL.createObjectURL(blob);
+let a=document.createElement("a");
+
+a.href=u;
+a.download=`knicks-v2-season-backup-${new Date().toISOString().slice(0,10)}.json`;
+
+a.click();
+
+setTimeout(()=>URL.revokeObjectURL(u),1000)
+};
+
+$("importBtn").onclick=()=>$("file").click();
+
+$("file").onchange=e=>{
+
+let f=e.target.files?.[0];
+
+if(!f)return;
+
+let r=new FileReader();
+
+r.onload=()=>{
+
+try{
+
+let d=JSON.parse(r.result);
+
+if(!Array.isArray(d.history))
+throw 0;
+
+if(!confirm(`Import ${d.history.length} completed game(s)?`))
+return;
+
+hist=d.history.map(norm);
+
+save();
+rh();
+render();
+
+alert("Season backup imported.")
+
+}catch{
+
+alert("That file is not a valid Knicks season backup.")
+
+}
+
+e.target.value=""
+};
+
+r.readAsText(f)
+};
+
+/* =====================================================
+   EXPANDED VISUAL CLIPBOARD
+===================================================== */
+
+const PLAY={
+
+"OFFENSE":[
+
+{
+n:"5-SPOT SPACING",
+s:"1 top · 2 wings · 2 bigs",
+k:[
+"Spread the floor.",
+"Do not crowd the ball.",
+"Attack open lanes.",
+"Pass or shoot when open.",
+"Bigs crash the boards."
+]
+},
+
+{
+n:"PASS → CUT → FILL",
+s:"Pass · cut hard · fill",
+k:[
+"Pass first.",
+"Cut hard toward the basket.",
+"Do not stand after passing.",
+"Next player fills the empty spot."
+]
+},
+
+{
+n:"GIVE & GO",
+s:"Pass · cut · return pass",
+k:[
+"Pass to the wing.",
+"Cut immediately to the basket.",
+"Receiver looks for the return pass.",
+"Finish at the rim."
+]
+},
+
+{
+n:"DRIBBLE DRIVE",
+s:"Attack the basket",
+k:[
+"Attack north-south.",
+"Do not dribble into the corner.",
+"Draw a defender.",
+"Finish or kick out."
+]
+},
+
+{
+n:"SCREEN & ROLL",
+s:"Ball screen action",
+k:[
+"Set a stationary screen.",
+"Ball handler attacks tight off the screen.",
+"Screener rolls to the basket.",
+"Look for the layup first."
+]
+},
+
+{
+n:"MOTION",
+s:"Pass · cut · fill",
+k:[
+"Keep moving.",
+"Maintain spacing.",
+"Pass and cut.",
+"Fill the open spot."
+]
+},
+
+{
+n:"HORNS",
+s:"Two bigs at elbows",
+k:[
+"Point starts up top.",
+"Bigs occupy both elbows.",
+"Wings stay wide.",
+"Attack either side."
+]
+}
+
+],
+
+"DEFENSE":[
+
+{
+n:"2-1-2 START",
+s:"Starting positions",
+k:[
+"Two guards up.",
+"One defender protects the middle.",
+"Two defenders protect the low blocks.",
+"Hands up and active."
+]
+},
+
+{
+n:"BALL LEFT",
+s:"Zone shifts left",
+k:[
+"Closest guard pressures the ball.",
+"Middle protects the lane.",
+"Backside defenders shift toward the ball.",
+"Move together."
+]
+},
+
+{
+n:"BALL RIGHT",
+s:"Zone shifts right",
+k:[
+"Closest guard pressures the ball.",
+"Middle protects the lane.",
+"Backside defenders shift toward the ball.",
+"Move together."
+]
+},
+
+{
+n:"CORNER",
+s:"Corner rotation",
+k:[
+"Low defender closes to the corner.",
+"Middle drops toward the block.",
+"Guard protects the passing lane.",
+"Backside protects the rim."
+]
+},
+
+{
+n:"DOUBLE-TEAM",
+s:"Trap the ball",
+k:[
+"Two defenders attack the ball.",
+"Hands high.",
+"Do not reach wildly.",
+"Other three protect gaps and paint."
+]
+},
+
+{
+n:"PROTECT PAINT",
+s:"No easy drives",
+k:[
+"Pressure the ball.",
+"Middle protects the lane.",
+"Stay between player and basket.",
+"No easy layups."
+]
+},
+
+{
+n:"BOX OUT",
+s:"Shot goes up",
+k:[
+"Find a player.",
+"Make contact.",
+"Turn and box out.",
+"Go get the ball."
+]
+}
+
+],
+
+"TRANSITION":[
+
+{
+n:"REBOUND → OUTLET",
+s:"Secure · chin · outlet",
+k:[
+"Rebound with two hands.",
+"Chin the ball.",
+"Find a short safe outlet.",
+"No dangerous cross-court pass."
+]
+},
+
+{
+n:"3-LANE BREAK",
+s:"Left · middle · right",
+k:[
+"Run wide.",
+"Ball in the middle.",
+"Fill all three lanes.",
+"Attack before defense sets."
+]
+},
+
+{
+n:"2-ON-1",
+s:"Make defender choose",
+k:[
+"Ball handler attacks the middle.",
+"Do not pass too early.",
+"Force defender to commit.",
+"Pass or finish."
+]
+},
+
+{
+n:"GET BACK",
+s:"Stop transition",
+k:[
+"Sprint back.",
+"Protect the basket first.",
+"Stop the ball.",
+"Then match up."
+]
+}
+
+],
+
+"SITUATIONS":[
+
+{
+n:"BASELINE INBOUND",
+s:"Safe inbound",
+k:[
+"Move before the pass.",
+"Show hands.",
+"Do not lob into traffic.",
+"Get the ball in safely."
+]
+},
+
+{
+n:"SIDELINE INBOUND",
+s:"Create separation",
+k:[
+"Cut hard.",
+"Come toward the ball.",
+"Use short direct passes.",
+"Do not stand."
+]
+},
+
+{
+n:"PRESS BREAK",
+s:"Come to the ball",
+k:[
+"Spread out.",
+"Meet the pass.",
+"No long lob passes.",
+"Use the middle."
+]
+},
+
+{
+n:"LAST SHOT",
+s:"Spacing · attack",
+k:[
+"Know the clock.",
+"Best ball handler starts with the ball.",
+"Attack the basket.",
+"Be ready to rebound."
+]
+}
+
+],
+
+"BLANK":[
+{
+n:"BLANK COURT",
+s:"Explain anything",
+k:[
+"Use the court for a quick coaching explanation."
+]
+}
+]
+
+};
+
+/* PLAYER FIGURE */
+
+function kid(x,y,num,ball=false){
+
+return `
+<g transform="translate(${x} ${y})">
+
+<line class="kidLimb" x1="-10" y1="17" x2="-18" y2="40"/>
+<line class="kidLimb" x1="10" y1="17" x2="18" y2="40"/>
+
+<line class="kidLimb" x1="-14" y1="2" x2="-29" y2="18"/>
+<line class="kidLimb" x1="14" y1="2" x2="29" y2="18"/>
+
+<rect class="kidBody" x="-19" y="-8" width="38" height="39" rx="8"/>
+
+<path class="kidShorts"
+d="M-18 27 L18 27 L14 43 L3 43 L0 32 L-3 43 L-14 43 Z"/>
+
+<circle class="kidHead" cx="0" cy="-22" r="14"/>
+
+<text class="jersey" x="0" y="10">${num}</text>
+
+${ball?`
+<circle class="ball" cx="-36" cy="21" r="11"/>
+<path
+d="M-47 21h22 M-36 10c6 6 6 16 0 22 M-36 10c-6 6-6 16 0 22"
+fill="none"
+stroke="#111"
+stroke-width="1.5"/>
+`:""}
+
+</g>
+`
+}
+
+function defender(x,y,num){
+
+return `
+<g transform="translate(${x} ${y})">
+
+<line class="kidLimb" x1="-10" y1="17" x2="-20" y2="40"/>
+<line class="kidLimb" x1="10" y1="17" x2="20" y2="40"/>
+
+<line class="kidLimb" x1="-14" y1="2" x2="-31" y2="-8"/>
+<line class="kidLimb" x1="14" y1="2" x2="31" y2="-8"/>
+
+<rect class="defBody" x="-19" y="-8" width="38" height="39" rx="8"/>
+
+<path class="defShorts"
+d="M-18 27 L18 27 L14 43 L3 43 L0 32 L-3 43 L-14 43 Z"/>
+
+<circle class="kidHead" cx="0" cy="-22" r="14"/>
+
+<text class="defText" x="0" y="10">${num}</text>
+
+</g>
+`
+}
+
+function courtBase(){
+
+return `
+<rect x="0" y="0" width="800" height="800" fill="#e6b168"/>
+
+<line x1="70" y1="45" x2="730" y2="45" class="courtLine"/>
+
+<rect x="285" y="45" width="230" height="230" class="courtLine"/>
+
+<circle cx="400" cy="275" r="68" class="courtLine"/>
+
+<rect x="365" y="60" width="70" height="8" rx="3"
+fill="#fff" stroke="#111" stroke-width="3"/>
+
+<circle cx="400" cy="98" r="18"
+fill="none" stroke="#f15a24" stroke-width="6"/>
+
+<path
+d="M135 45 L135 155
+C135 475 255 625 400 625
+C545 625 665 475 665 155
+L665 45"
+class="courtLine"/>
+
+<defs>
+
+<marker id="arrow"
+markerWidth="10"
+markerHeight="10"
+refX="8"
+refY="3"
+orient="auto">
+
+<path d="M0,0 L0,6 L9,3 z" fill="#e3391c"/>
+
+</marker>
+
+</defs>
+`
+}
+
+function draw(name){
+
+let body="";
+
+/* OFFENSE */
+
+if(name==="5-SPOT SPACING"){
+
+body=`
+${kid(400,685,"11",true)}
+${kid(145,475,"2")}
+${kid(655,475,"8")}
+${kid(285,235,"00")}
+${kid(515,235,"20")}
+
+<text class="diagramLabel" x="400" y="755">POINT</text>
+<text class="diagramLabel" x="145" y="545">WING</text>
+<text class="diagramLabel" x="655" y="545">WING</text>
+<text class="diagramLabel" x="285" y="305">BIG</text>
+<text class="diagramLabel" x="515" y="305">BIG</text>
+`
+}
+
+else if(name==="PASS → CUT → FILL"){
+
+body=`
+${kid(400,685,"11",true)}
+${kid(145,475,"2")}
+${kid(655,475,"8")}
+${kid(285,235,"00")}
+${kid(515,235,"20")}
+
+<path class="pass" marker-end="url(#arrow)"
+d="M365 660 L185 495"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M400 635 C385 520 380 405 395 300"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M160 520 C225 600 285 650 345 675"/>
+`
+}
+
+else if(name==="GIVE & GO"){
+
+body=`
+${kid(400,685,"11",true)}
+${kid(170,480,"2")}
+${kid(630,480,"8")}
+
+<path class="pass" marker-end="url(#arrow)"
+d="M365 660 L205 500"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M400 635 C380 510 385 370 400 250"/>
+
+<path class="pass" marker-end="url(#arrow)"
+d="M205 455 C275 375 330 310 385 265"/>
+`
+}
+
+else if(name==="DRIBBLE DRIVE"){
+
+body=`
+${kid(400,685,"11",true)}
+${kid(145,475,"2")}
+${kid(655,475,"8")}
+${kid(285,235,"00")}
+${kid(515,235,"20")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M400 630 C385 520 370 410 385 290"/>
+`
+}
+
+else if(name==="SCREEN & ROLL"){
+
+body=`
+${kid(320,650,"11",true)}
+${kid(450,500,"00")}
+${kid(650,450,"8")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M320 600 C335 535 370 505 405 490"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M450 455 C455 375 435 305 410 255"/>
+`
+}
+
+else if(name==="MOTION"){
+
+body=`
+${kid(400,685,"11",true)}
+${kid(145,475,"2")}
+${kid(655,475,"8")}
+${kid(285,235,"00")}
+${kid(515,235,"20")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M400 635 C350 560 285 520 205 495"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M160 430 C200 330 235 285 265 250"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M300 205 C365 180 435 180 500 205"/>
+`
+}
+
+else if(name==="HORNS"){
+
+body=`
+${kid(400,680,"11",true)}
+${kid(290,330,"00")}
+${kid(510,330,"20")}
+${kid(125,475,"2")}
+${kid(675,475,"8")}
+`
+}
+
+/* DEFENSE */
+
+else if(name==="2-1-2 START"){
+
+body=`
+${defender(285,330,"1")}
+${defender(515,330,"2")}
+${defender(400,455,"3")}
+${defender(275,610,"4")}
+${defender(525,610,"5")}
+`
+}
+
+else if(name==="BALL LEFT"){
+
+body=`
+${kid(110,355,"O",true)}
+
+${defender(250,330,"1")}
+${defender(470,355,"2")}
+${defender(350,455,"3")}
+${defender(235,580,"4")}
+${defender(485,600,"5")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M225 315 L150 350"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M330 435 L210 390"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M215 560 L160 480"/>
+`
+}
+
+else if(name==="BALL RIGHT"){
+
+body=`
+${kid(690,355,"O",true)}
+
+${defender(550,330,"1")}
+${defender(330,355,"2")}
+${defender(450,455,"3")}
+${defender(565,580,"4")}
+${defender(315,600,"5")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M575 315 L650 350"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M470 435 L590 390"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M585 560 L640 480"/>
+`
+}
+
+else if(name==="CORNER"){
+
+body=`
+${kid(105,185,"O",true)}
+
+${defender(245,300,"1")}
+${defender(470,340,"2")}
+${defender(350,440,"3")}
+${defender(190,245,"4")}
+${defender(500,575,"5")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M175 225 L125 195"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M330 420 L235 285"/>
+`
+}
+
+else if(name==="DOUBLE-TEAM"){
+
+body=`
+${kid(120,355,"O",true)}
+
+${defender(245,320,"1")}
+${defender(330,430,"3")}
+${defender(500,340,"2")}
+${defender(260,590,"4")}
+${defender(520,590,"5")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M220 305 L155 345"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M310 410 L155 365"/>
+
+<text class="diagramLabel" x="155" y="285">TRAP</text>
+`
+}
+
+else if(name==="PROTECT PAINT"){
+
+body=`
+${kid(110,450,"O",true)}
+
+${defender(275,340,"1")}
+${defender(525,340,"2")}
+${defender(400,440,"3")}
+${defender(300,575,"4")}
+${defender(500,575,"5")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M260 325 L155 420"/>
+`
+}
+
+else if(name==="BOX OUT"){
+
+body=`
+${defender(310,400,"4")}
+${kid(310,330,"O")}
+
+${defender(490,400,"5")}
+${kid(490,330,"O")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M310 375 L310 350"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M490 375 L490 350"/>
+
+<circle class="ball" cx="400" cy="120" r="12"/>
+`
+}
+
+/* TRANSITION */
+
+else if(name==="REBOUND → OUTLET"){
+
+body=`
+${kid(400,215,"00",true)}
+${kid(180,430,"11")}
+${kid(620,430,"8")}
+
+<path class="pass" marker-end="url(#arrow)"
+d="M365 235 L215 410"/>
+`
+}
+
+else if(name==="3-LANE BREAK"){
+
+body=`
+${kid(180,665,"2")}
+${kid(400,690,"11",true)}
+${kid(620,665,"8")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M180 615 L180 300"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M400 640 L400 260"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M620 615 L620 300"/>
+`
+}
+
+else if(name==="2-ON-1"){
+
+body=`
+${kid(270,650,"11",true)}
+${kid(555,650,"8")}
+${defender(400,360,"D")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M280 600 C300 500 340 420 380 380"/>
+
+<path class="pass" marker-end="url(#arrow)"
+d="M310 625 C390 600 475 605 520 630"/>
+`
+}
+
+else if(name==="GET BACK"){
+
+body=`
+${defender(250,650,"1")}
+${defender(400,680,"2")}
+${defender(550,650,"3")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M250 600 L300 300"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M400 630 L400 260"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M550 600 L500 300"/>
+`
+}
+
+/* SITUATIONS */
+
+else if(name==="BASELINE INBOUND"){
+
+body=`
+${kid(680,110,"11",true)}
+${kid(250,230,"2")}
+${kid(550,230,"8")}
+${kid(300,420,"00")}
+${kid(500,420,"20")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M300 390 L390 300"/>
+
+<path class="pass" marker-end="url(#arrow)"
+d="M645 120 L420 290"/>
+`
+}
+
+else if(name==="SIDELINE INBOUND"){
+
+body=`
+${kid(710,480,"11",true)}
+${kid(250,420,"2")}
+${kid(480,300,"8")}
+${kid(350,550,"00")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M480 270 L560 390"/>
+
+<path class="pass" marker-end="url(#arrow)"
+d="M675 470 L570 410"/>
+`
+}
+
+else if(name==="PRESS BREAK"){
+
+body=`
+${kid(400,690,"11",true)}
+${kid(160,570,"2")}
+${kid(640,570,"8")}
+${kid(280,380,"00")}
+${kid(520,380,"20")}
+
+<path class="pass" marker-end="url(#arrow)"
+d="M365 665 L195 585"/>
+
+<path class="move" marker-end="url(#arrow)"
+d="M280 345 L340 280"/>
+`
+}
+
+else if(name==="LAST SHOT"){
+
+body=`
+${kid(400,680,"11",true)}
+${kid(150,480,"2")}
+${kid(650,480,"8")}
+${kid(300,250,"00")}
+${kid(500,250,"20")}
+
+<path class="move" marker-end="url(#arrow)"
+d="M400 625 C385 510 385 390 400 280"/>
+`
+}
+
+/* BLANK */
+else if(name==="BLANK COURT"){
+body=``
+}
+
+$("call").innerHTML=`
+<svg class="diagram"
+viewBox="0 0 800 800"
+preserveAspectRatio="xMidYMid meet">
+${courtBase()}
+${body}
+</svg>
+`
+}
+
+/* CLIPBOARD UI */
+
+let cats=Object.keys(PLAY);
+
+$("clipCats").innerHTML=
+cats.map((c,i)=>`
+<button class="${i?"":"on"}" data-cat="${c}">
+${c}
+</button>
+`).join("");
+
+function setCat(c){
+
+document.querySelectorAll("[data-cat]").forEach(b=>
+b.classList.toggle("on",b.dataset.cat===c)
+);
+
+$("plays").innerHTML=
+PLAY[c].map((p,i)=>`
+<button class="play ${i?"":"selected"}" data-call="${p.n}">
+${p.n}
+<small>${p.s}</small>
+</button>
+`).join("");
+
+document.querySelectorAll("[data-call]").forEach(b=>
+b.onclick=()=>selectPlay(c,b.dataset.call)
+);
+
+selectPlay(c,PLAY[c][0].n)
+}
+
+function selectPlay(cat,name){
+
+let p=PLAY[cat].find(x=>x.n===name);
+
+if(!p)return;
+
+document.querySelectorAll("[data-call]").forEach(b=>
+b.classList.toggle("selected",b.dataset.call===name)
+);
+
+$("playTitle").textContent=p.n;
+$("playSub").textContent=p.s;
+
+$("keyPoints").innerHTML=
+p.k.map(x=>`<li>${x}</li>`).join("");
+
+draw(name)
+}
+
+document.querySelectorAll("[data-cat]").forEach(b=>
+b.onclick=()=>setCat(b.dataset.cat)
+);
+
+setCat("OFFENSE");
+
+$("clipBtn").onclick=()=>
+$("clipModal").classList.add("on");
+
+render();
+save();
+
+})();
+</script>
+
+</body>
+</html>
