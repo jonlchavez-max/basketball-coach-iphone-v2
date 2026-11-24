@@ -363,11 +363,6 @@ font:inherit;font-size:12px;min-height:32px;border:1px solid #444;border-radius:
 <span class="gameChevron" id="gameChevron">⌃</span>
 </div>
 
-<div class="seasonBar">
-<select id="activeSeason" aria-label="Active season"></select>
-<button id="seasonsBtn">SEASONS</button>
-</div>
-
 <div class="players" id="players"></div>
 
 <div class="footer">
@@ -420,6 +415,11 @@ font:inherit;font-size:12px;min-height:32px;border:1px solid #444;border-radius:
 <h2>Season History</h2>
 <button class="close" data-close="historyModal">CLOSE</button>
 </div>
+<div class="seasonBar">
+<select id="activeSeason" aria-label="Active season"></select>
+<button id="seasonsBtn">SEASONS</button>
+</div>
+
 <div class="backups">
 <button id="exportBtn">EXPORT ALL SEASONS</button>
 <button id="importBtn">IMPORT BACKUP</button>
@@ -853,7 +853,7 @@ $("gameNum").textContent=`Game ${st.g+1} of ${S.length}${hist.some(result=>resul
 $("opp").textContent=g[2];
 $("meta").textContent=[
 g[0],g[1],g[3],season.id!=="fall-2026"&&(g[3]==="HOME"?"WHITE":"BLACK"),
-season.id==="winter-2026-27"&&"FieldhouseUSA Frisco",g[4]||"Court TBD"
+g[4]||"Court TBD"
 ].filter(Boolean).join(" · ");
 
 $("clock").textContent=fmt(st.rem[st.half]);
@@ -1080,12 +1080,14 @@ commitLibrary(next)
 
 function commitLibrary(next){
 if(!persist(next))return false;
+const activeChanged=library.active!==next.active;
 library=next;
 selectSeason();
 adj=null;
 absOpen=false;
 renderSeasonSelector();
 render();
+if(activeChanged&&$("historyModal").classList.contains("on"))showHistory(library.active);
 return true
 }
 
@@ -1127,7 +1129,8 @@ let viewedSeason;
 function showHistory(id){
 const item=findSeason(id);
 viewedSeason=id;
-$("historySeason").textContent=item.title+(id===library.active?"":" · Read-only");
+$("historySeason").hidden=id===library.active;
+$("historySeason").textContent=id===library.active?"":item.title+" · Read-only";
 let wins=0,losses=0,ties=0;
 const totals=stats(namesOf(item),()=>({pts:0,played:0}));
 for(const result of item.history){
