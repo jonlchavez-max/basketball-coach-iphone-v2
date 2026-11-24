@@ -519,14 +519,14 @@ const WINTER_ROSTER=[
 "Sidarth Alloju","Nhonebong Sone","Ari Stevens"
 ];
 const WINTER_SCHEDULE=[
-["Sat 12/5/2026","4 PM","One J Blue","HOME",""],
-["Sun 12/13/2026","12 PM","Prosper Eagles","HOME",""],
-["Sun 1/3/2027","12 PM","Hoop Dreams","HOME",""],
-["Fri 1/15/2027","6 PM","Prosper Eagles","AWAY",""],
-["Sat 1/23/2027","4 PM","Wolfpack","HOME",""],
-["Sat 1/30/2027","4 PM","D1 White","AWAY",""],
-["Sun 2/7/2027","12 PM","Defenders","AWAY",""],
-["Sat 2/13/2027","4 PM","One J Blue","AWAY",""]
+["Sat 12/5/2026","4 PM","One J Blue","HOME","Court 05"],
+["Sun 12/13/2026","12 PM","Prosper Eagles","HOME","Court 05"],
+["Sun 1/3/2027","12 PM","Hoop Dreams","HOME","Court 05"],
+["Fri 1/15/2027","6 PM","Prosper Eagles","AWAY","Court 03"],
+["Sat 1/23/2027","4 PM","Wolfpack","HOME","Court 05"],
+["Sat 1/30/2027","4 PM","D1 White","AWAY","Court 05"],
+["Sun 2/7/2027","12 PM","Defenders","AWAY","Court 05"],
+["Sat 2/13/2027","4 PM","One J Blue","AWAY","Court 05"]
 ];
 
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({
@@ -641,16 +641,37 @@ throw new Error("Invalid season data")
 return value
 }
 
+function addWinterCourtDefaults(library){
+const winter=library.seasons.find(item=>item.id==="winter-2026-27");
+if(!winter||winter.courtDefaultsApplied===true)return false;
+for(const game of winter.schedule){
+if(game[4])continue;
+const official=WINTER_SCHEDULE.find(entry=>entry.slice(0,4).every((value,index)=>value===game[index]));
+if(official)game[4]=official[4]
+}
+winter.courtDefaultsApplied=true;
+return true
+}
+
 let storedSnapshot;
 function loadSeasons(){
 const existing=localStorage.getItem(STORAGE);
 storedSnapshot=existing;
-if(existing!==null)return validateStore(JSON.parse(existing));
+if(existing!==null){
+const saved=validateStore(JSON.parse(existing));
+if(addWinterCourtDefaults(saved)){
+const serialized=JSON.stringify(saved);
+localStorage.setItem(STORAGE,serialized);
+storedSnapshot=serialized
+}
+return saved
+}
 const legacyHistory=localStorage.getItem(LEGACY_HISTORY);
 const fall=migrateFall(legacyHistory===null?[]:JSON.parse(legacyHistory),
 JSON.parse(localStorage.getItem(LEGACY_LIVE)));
-const winter=newSeason("winter-2026-27","Winter 2026–27",WINTER_ROSTER,WINTER_SCHEDULE);
+const winter=newSeason("winter-2026-27","Winter 2026–27",WINTER_ROSTER,WINTER_SCHEDULE.map(game=>[...game]));
 const initial={version:1,active:winter.id,seasons:[fall,winter]};
+addWinterCourtDefaults(initial);
 const serialized=JSON.stringify(initial);
 localStorage.setItem(STORAGE,serialized);
 storedSnapshot=serialized;
@@ -1377,6 +1398,7 @@ if(data.live!=null)existing.current=item.current
 }
 if(multi)next.active=incoming.active;
 validateStore(next);
+addWinterCourtDefaults(next);
 if(commitLibrary(next))showHistory(multi?next.active:fall.id)
 }catch(error){
 console.error(error);
