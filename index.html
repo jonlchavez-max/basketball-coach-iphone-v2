@@ -298,6 +298,24 @@ font-size:11px;
 line-height:1.5
 }
 
+[hidden]{display:none!important}
+.seasonBar,.seasonActions,.pens{display:flex;gap:5px;align-items:center;margin:4px 0}
+.seasonBar select{flex:1;min-width:0}
+.seasonBar select,.seasonBar button,.seasonActions button,.seasonFields input,.seasonFields select,.seasonFields textarea,.pens button,.histItem button{
+font:inherit;font-size:12px;min-height:32px;border:1px solid #444;border-radius:7px;background:#151515;color:#fff;padding:4px 8px
+}
+.seasonBar select,.pens [aria-pressed="true"]{border-color:var(--o)}
+.seasonFields{display:grid;gap:8px;margin:8px 0}
+.seasonFields label{display:grid;gap:3px;color:#ddd;font-size:13px}
+.seasonFields input,.seasonFields select,.seasonFields textarea{font-size:16px;width:100%}
+.seasonFields textarea{min-height:100px}
+.seasonActions{flex-wrap:wrap}
+.histItem summary{cursor:pointer;color:var(--o)}
+.histItem table{width:100%;text-align:left;font-size:12px;margin:6px 0}
+.histItem p,.seasonNote{font-size:12px;color:#bbb}
+.correctionStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.correctionStats b{grid-column:1/-1}
+.diagram.sketch{touch-action:none;user-select:none;cursor:crosshair}
 @media(max-height:760px){
 .score,.timer{height:88px}
 .score input{height:49px;font-size:36px}
@@ -343,6 +361,11 @@ line-height:1.5
 <div class="meta" id="meta"></div>
 <button class="rosterBtn" id="rosterBtn">ROSTER</button>
 <span class="gameChevron" id="gameChevron">⌃</span>
+</div>
+
+<div class="seasonBar">
+<select id="activeSeason" aria-label="Active season"></select>
+<button id="seasonsBtn">SEASONS</button>
 </div>
 
 <div class="players" id="players"></div>
@@ -398,13 +421,38 @@ line-height:1.5
 <button class="close" data-close="historyModal">CLOSE</button>
 </div>
 <div class="backups">
-<button id="exportBtn">EXPORT SEASON BACKUP</button>
-<button id="importBtn">IMPORT SEASON BACKUP</button>
+<button id="exportBtn">EXPORT ALL SEASONS</button>
+<button id="importBtn">IMPORT BACKUP</button>
 </div>
 <input id="file" type="file" accept=".json,application/json" hidden>
+<p class="seasonNote" id="historySeason"></p>
 <div class="record">SEASON RECORD <b id="record">0–0</b></div>
 <div class="seasonPts" id="seasonPts"></div>
 <div class="hist" id="hist"></div>
+</div>
+</div>
+
+<div class="modal" id="seasonsModal">
+<div class="box">
+<div class="modalHead"><h2>Seasons</h2><button class="close" data-close="seasonsModal">CLOSE</button></div>
+<div class="seasonActions">
+<button id="newSeason">NEW SEASON</button>
+<button id="editRoster">EDIT ROSTER</button>
+<button id="editSchedule">SCHEDULE</button>
+</div>
+<p class="seasonNote" id="practice"></p>
+<h3>Previous Seasons</h3>
+<div class="hist" id="archive"></div>
+</div>
+</div>
+
+<div class="modal" id="editorModal">
+<div class="box">
+<div class="modalHead"><h2 id="editorTitle"></h2><button class="close" data-close="editorModal">CANCEL</button></div>
+<form id="editorForm">
+<div class="seasonFields" id="editorFields"></div>
+<div class="seasonActions"><button id="editorSubmit" type="submit">SAVE</button></div>
+</form>
 </div>
 </div>
 
@@ -423,6 +471,12 @@ line-height:1.5
 <div class="playTitle" id="playTitle"></div>
 <div class="playSub" id="playSub"></div>
 
+<div class="pens" id="pens" hidden>
+<button data-pen="#111" aria-pressed="true">BLACK</button>
+<button data-pen="#c62020" aria-pressed="false">RED</button>
+<button id="undoStroke">UNDO</button>
+<button id="clearSketch">CLEAR</button>
+</div>
 <div class="court">
 <div id="call"></div>
 </div>
@@ -440,12 +494,12 @@ line-height:1.5
 
 const $=id=>document.getElementById(id);
 
-const P=[
+const FALL_ROSTER=[
 "Zane","Jonah","Vivaan","Krew","Nhonebong",
 "Max","Niam","Justin","Sidarth","Ethan"
 ];
 
-const S=[
+const FALL_SCHEDULE=[
 ["Sun 9/6","12 PM","D1 White","HOME","Court 03"],
 ["Sun 9/20","3 PM","Collinsville Pirates","HOME","Court 01"],
 ["Sun 9/27","12 PM","Collinsville Pirates","AWAY","Court 01"],
@@ -456,79 +510,216 @@ const S=[
 ["Sun 11/8","1 PM","Jags","AWAY","Court 04"]
 ];
 
-const K="knicks_v2_live_v2";
-const H="knicks_v2_history";
+const LEGACY_LIVE="knicks_v2_live_v2";
+const LEGACY_HISTORY="knicks_v2_history";
+const STORAGE="knicks_coach_seasons_v1";
+const BACKUP_APP="Knicks Coach Multi-Season";
+const WINTER_ROSTER=[
+"Zane Chavez","Jonah Jang","Vivaan Nath","Niam Banker","Justin Levine",
+"Sidarth Alloju","Nhonebong Sone","Ari Stevens"
+];
+const WINTER_SCHEDULE=[
+["Sat 12/5/2026","4 PM","One J Blue","HOME",""],
+["Sun 12/13/2026","12 PM","Prosper Eagles","HOME",""],
+["Sun 1/3/2027","12 PM","Hoop Dreams","HOME",""],
+["Fri 1/15/2027","6 PM","Prosper Eagles","AWAY",""],
+["Sat 1/23/2027","4 PM","Wolfpack","HOME",""],
+["Sat 1/30/2027","4 PM","D1 White","AWAY",""],
+["Sun 2/7/2027","12 PM","Defenders","AWAY",""],
+["Sat 2/13/2027","4 PM","One J Blue","AWAY",""]
+];
 
-const fresh=g=>({
-g,
-half:0,
-rem:[1200,1200],
-r:false,
-last:null,
-ks:0,
-os:0,
-status:Object.fromEntries(P.map(n=>[n,"off"])),
-played:Object.fromEntries(P.map(n=>[n,[0,0]])),
-pts:Object.fromEntries(P.map(n=>[n,0]))
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+const number=value=>Math.max(0,Number.isFinite(+value)?Math.floor(+value):0);
+const fmt=s=>`${Math.floor(number(s)/60)}:${String(number(s)%60).padStart(2,"0")}`;
+const players=names=>names.map(full=>({full,name:full.split(/\s+/)[0]}));
+const stats=(names,fn)=>Object.fromEntries(names.map(n=>[n,fn(n)]));
+const namesOf=item=>item.roster.map(player=>player.name);
+const indexIn=(item,index)=>Number.isInteger(index)&&index>=0&&index<item.schedule.length;
+
+function newSeason(id,title,roster,schedule,archived=false){
+return {id,title,roster:players(roster),schedule,archived,current:0,games:{},history:[]}
+}
+
+function fresh(g,item=season){
+const names=namesOf(item);
+return {
+g,half:0,rem:[1200,1200],r:false,last:null,ks:0,os:0,
+status:stats(names,n=>item.id==="winter-2026-27"&&g<2&&n==="Sidarth"?"absent":"off"),
+played:stats(names,()=>[0,0]),
+pts:stats(names,()=>0)
+}
+}
+
+function normalizeStats(raw,item){
+const names=namesOf(item);
+return {
+ks:number(raw.ks),os:number(raw.os),
+pts:stats(names,n=>number(Object.hasOwn(raw.pts||{},n)?raw.pts[n]:0)),
+played:stats(names,n=>{
+const time=Object.hasOwn(raw.played||{},n)?raw.played[n]:null;
+if(!Array.isArray(time))return [0,0];
+return time.length>=4
+?[number(time[0])+number(time[1]),number(time[2])+number(time[3])]
+:[number(time[0]),number(time[1])]
+})
+}
+}
+
+function normalizeGame(raw,item,index){
+const initial=fresh(index,item);
+const status=stats(namesOf(item),n=>{
+const value=raw.status?.[n];
+return ["on","off","absent"].includes(value)?value:initial.status[n]
 });
+namesOf(item).filter(n=>status[n]==="on").slice(5).forEach(n=>status[n]="off");
+return {
+...initial,...normalizeStats(raw,item),status,
+half:raw.half===1?1:0,
+rem:initial.rem.map((seconds,i)=>Array.isArray(raw.rem)&&raw.rem[i]!=null
+?Math.min(1200,number(raw.rem[i])):seconds)
+}
+}
 
-const load=k=>{
-try{return JSON.parse(localStorage.getItem(k))}
-catch{return null}
-};
+function migrateFall(history,live){
+if(!Array.isArray(history)||history.some(game=>!game||!indexIn({schedule:FALL_SCHEDULE},game.g))
+||(live!=null&&(!live||!indexIn({schedule:FALL_SCHEDULE},live.g)))){
+throw new Error("Invalid Fall game data")
+}
+const fall=newSeason("fall-2026","Fall 2026",FALL_ROSTER,FALL_SCHEDULE,true);
+for(const result of history){
+const game=fall.schedule[result.g];
+if(fall.history.some(existing=>existing.g===result.g))throw new Error("Duplicate Fall game");
+fall.history.push({
+g:result.g,opp:result.opp||game[2],date:result.date||game[0],...normalizeStats(result,fall)
+})
+}
+if(live){
+fall.current=live.g;
+fall.games[live.g]=normalizeGame(live,fall,live.g)
+}
+return fall
+}
 
-const fmt=s=>
-`${Math.floor(Math.max(0,s)/60)}:${String(Math.floor(Math.max(0,s)%60)).padStart(2,"0")}`;
+function validateStore(value){
+const items=value?.seasons;
+const isRecord=value=>value&&typeof value==="object"&&!Array.isArray(value);
+const validStats=(game,item)=>isRecord(game)&&
+[game.ks,game.os].every(value=>Number.isInteger(value)&&value>=0)&&
+isRecord(game.pts)&&isRecord(game.played)&&namesOf(item).every(n=>
+Number.isInteger(game.pts[n])&&game.pts[n]>=0&&
+Array.isArray(game.played[n])&&game.played[n].length===2&&
+game.played[n].every(value=>Number.isInteger(value)&&value>=0));
+if(value?.version!==1||!Array.isArray(items)||!items.length
+||new Set(items.map(item=>item?.id)).size!==items.length
+||!items.some(item=>item?.id===value.active&&!item.archived)){
+throw new Error("Invalid season library")
+}
+for(const item of items){
+if(typeof item.id!=="string"||!item.id||typeof item.title!=="string"||!item.title
+||typeof item.archived!=="boolean"||(item.id==="fall-2026"&&!item.archived)
+||!Array.isArray(item.roster)||!item.roster.length
+||item.roster.some(player=>typeof player?.name!=="string"||!player.name||
+typeof player.full!=="string"||!player.full)
+||new Set(namesOf(item)).size!==item.roster.length
+||!Array.isArray(item.schedule)||!indexIn(item,item.current)
+||item.schedule.some(game=>!Array.isArray(game)||game.length!==5||
+game.some(field=>typeof field!=="string")||!game[0]||!game[1]||!game[2]||!["HOME","AWAY"].includes(game[3]))
+||!Array.isArray(item.history)||item.history.some(game=>!validStats(game,item)||
+!indexIn(item,game.g)||typeof game.date!=="string"||typeof game.opp!=="string")
+||new Set(item.history.map(game=>game.g)).size!==item.history.length
+||!isRecord(item.games)||Object.entries(item.games).some(([key,game])=>
+!validStats(game,item)||String(game.g)!==key||!indexIn(item,game.g)||
+![0,1].includes(game.half)||!Array.isArray(game.rem)||game.rem.length!==2||
+game.rem.some(value=>!Number.isInteger(value)||value<0||value>1200)||
+!isRecord(game.status)||namesOf(item).some(n=>!["on","off","absent"].includes(game.status[n])))){
+throw new Error("Invalid season data")
+}
+}
+return value
+}
 
-let hist=Array.isArray(load(H))?load(H):[];
-let st=load(K)||fresh(3);
+let storedSnapshot;
+function loadSeasons(){
+const existing=localStorage.getItem(STORAGE);
+storedSnapshot=existing;
+if(existing!==null)return validateStore(JSON.parse(existing));
+const legacyHistory=localStorage.getItem(LEGACY_HISTORY);
+const fall=migrateFall(legacyHistory===null?[]:JSON.parse(legacyHistory),
+JSON.parse(localStorage.getItem(LEGACY_LIVE)));
+const winter=newSeason("winter-2026-27","Winter 2026–27",WINTER_ROSTER,WINTER_SCHEDULE);
+const initial={version:1,active:winter.id,seasons:[fall,winter]};
+const serialized=JSON.stringify(initial);
+localStorage.setItem(STORAGE,serialized);
+storedSnapshot=serialized;
+return initial
+}
 
+let library;
+try{
+library=loadSeasons()
+}catch(error){
+console.error(error);
+const message=document.createElement("p");
+message.textContent="Season data could not be opened. Your saved data has been left in place. Check browser storage access before reloading.";
+document.querySelector(".app").replaceChildren(message);
+return
+}
+
+let season,P,S,hist,st;
 let absOpen=false;
 let adj=null;
 let metaCollapsed=false;
+let storageWarning=false;
 
-st.status??={};
-st.played??={};
-st.pts??={};
+function gameState(item,index){
+if(Object.hasOwn(item.games,index))return normalizeGame(item.games[index],item,index);
+const result=item.history.find(game=>game.g===index);
+return result?normalizeGame(result,item,index):fresh(index,item)
+}
 
-P.forEach(n=>{
-st.status[n]??="off";
-st.played[n]??=[0,0];
-st.pts[n]??=0
-});
+function selectSeason(){
+season=library.seasons.find(item=>item.id===library.active);
+P=namesOf(season);
+S=season.schedule;
+hist=season.history;
+st=gameState(season,season.current)
+}
 
-/* MAX FIVE ACTIVE */
-let initialOn=P.filter(n=>st.status[n]==="on");
-initialOn.slice(5).forEach(n=>st.status[n]="off");
+function persist(value){
+try{
+if(localStorage.getItem(STORAGE)!==storedSnapshot){
+if(!storageWarning)alert("Another tab changed the season data. Export this tab’s backup if needed, then reload before making more changes.");
+storageWarning=true;
+return false
+}
+const serialized=JSON.stringify(value);
+localStorage.setItem(STORAGE,serialized);
+storedSnapshot=serialized;
+storageWarning=false;
+return true
+}catch(error){
+console.error(error);
+if(!storageWarning)alert("The browser could not save season data. Export a backup before closing this page.");
+storageWarning=true;
+return false
+}
+}
 
 function save(){
-localStorage.setItem(K,JSON.stringify({...st,r:false,last:null}));
-localStorage.setItem(H,JSON.stringify(hist))
+season.games[st.g]={...st,r:false,last:null};
+return persist(library)
 }
 
-function norm(g){
-
-let played=Object.fromEntries(P.map(n=>[n,[0,0]]));
-
-P.forEach(n=>{
-let x=g?.played?.[n];
-
-if(Array.isArray(x))
-played[n]=x.length>=4
-?[+(x[0]||0)+ +(x[1]||0),+(x[2]||0)+ +(x[3]||0)]
-:[+(x[0]||0),+(x[1]||0)]
-});
-
-return{
-g:+(g?.g||0),
-opp:g?.opp||S[+(g?.g||0)]?.[2]||"Opponent",
-date:g?.date||S[+(g?.g||0)]?.[0]||"Game",
-ks:+(g?.ks||0),
-os:+(g?.os||0),
-pts:Object.fromEntries(P.map(n=>[n,+(g?.pts?.[n]||0)])),
-played
+function pause(){
+if(st.r)tick();
+st.r=false;
+st.last=null
 }
-}
+
+selectSeason();
 
 function card(n){
 
@@ -538,19 +729,19 @@ let m0=p[0]>=300;
 let m1=p[1]>=300;
 
 return `
-<div class="card ${s}" data-card="${n}">
-<div class="name">${n}</div>
+<div class="card ${s}" data-card="${esc(n)}">
+<div class="name">${esc(n)}</div>
 
 <div class="bottom">
 <div class="pts">${st.pts[n]} <small>PTS</small></div>
-<button class="pm" data-minus="${n}">−</button>
-<button class="pm plus" data-plus="${n}">+</button>
+<button class="pm" data-minus="${esc(n)}">−</button>
+<button class="pm plus" data-plus="${esc(n)}">+</button>
 </div>
 
 <div class="mins">
 
 <div class="minBox ${m0?"met":""}">
-<button class="timeBtn" data-time="${n}" data-h="0">
+<button class="timeBtn" data-time="${esc(n)}" data-h="0">
 1H <b>${fmt(p[0])}</b>
 </button>
 <div class="bar">
@@ -559,7 +750,7 @@ return `
 </div>
 
 <div class="minBox ${m1?"met":""}">
-<button class="timeBtn" data-time="${n}" data-h="1">
+<button class="timeBtn" data-time="${esc(n)}" data-h="1">
 2H <b>${fmt(p[1])}</b>
 </button>
 <div class="bar">
@@ -635,11 +826,14 @@ $("adjustModal").classList.add("on")
 
 function render(){
 
-let g=S[st.g]||S[0];
+let g=S[st.g];
 
-$("gameNum").textContent=`Game ${st.g+1} of ${S.length}`;
+$("gameNum").textContent=`Game ${st.g+1} of ${S.length}${hist.some(result=>result.g===st.g)?" · FINAL":""}`;
 $("opp").textContent=g[2];
-$("meta").textContent=`${g[0]} · ${g[1]} · ${g[3]} · ${g[4]}`;
+$("meta").textContent=[
+g[0],g[1],g[3],season.id!=="fall-2026"&&(g[3]==="HOME"?"WHITE":"BLACK"),
+season.id==="winter-2026-27"&&"FieldhouseUSA Frisco",g[4]||"Court TBD"
+].filter(Boolean).join(" · ");
 
 $("clock").textContent=fmt(st.rem[st.half]);
 $("ks").value=st.ks;
@@ -665,7 +859,7 @@ Absent Players (${absent.length}) ${absOpen?"▲":"▼"}
 <div class="absentGrid ${absOpen?"":"hide"}">
 ${absent.map(n=>`
 <div class="card absent">
-<div class="name">${n}</div>
+<div class="name">${esc(n)}</div>
 </div>`).join("")}
 </div>
 </div>`
@@ -684,8 +878,8 @@ function renderRoster(){
 
 $("rosterList").innerHTML=P.map(n=>`
 <div class="rosterRow">
-<b>${n}</b>
-<button class="presence ${st.status[n]==="absent"?"abs":""}" data-presence="${n}">
+<b>${esc(season.roster.find(player=>player.name===n).full)}</b>
+<button class="presence ${st.status[n]==="absent"?"abs":""}" data-presence="${esc(n)}">
 ${st.status[n]==="absent"?"ABSENT":"PRESENT"}
 </button>
 </div>
@@ -749,14 +943,17 @@ save()
 setInterval(tick,250);
 
 $("start").onclick=()=>{
-st.r=!st.r;
+if(st.rem[st.half]<=0)return;
+const wasRunning=st.r;
+if(wasRunning)tick();
+st.r=!wasRunning;
 st.last=st.r?Date.now():null;
 render();
 save()
 };
 
 document.querySelectorAll(".half").forEach(b=>b.onclick=()=>{
-st.r=false;
+pause();
 st.half=+b.dataset.half;
 render();
 save()
@@ -782,23 +979,17 @@ st.os=Math.max(0,+e.target.value||0);
 save()
 };
 
-$("prevGame").onclick=()=>{
-
-if(st.g>0&&confirm("Go to previous game? Unsaved current-game changes will reset.")){
-st=fresh(st.g-1);
+function goToGame(index){
+if(!S[index])return;
+pause();
+season.current=index;
+st=gameState(season,index);
 render();
 save()
 }
-};
 
-$("nextGame").onclick=()=>{
-
-if(st.g<S.length-1&&confirm("Go to next game? Unsaved current-game changes will reset.")){
-st=fresh(st.g+1);
-render();
-save()
-}
-};
+$("prevGame").onclick=()=>goToGame(st.g-1);
+$("nextGame").onclick=()=>goToGame(st.g+1);
 
 document.querySelectorAll("[data-adj]").forEach(b=>b.onclick=()=>{
 
@@ -827,168 +1018,370 @@ $(b.dataset.close).classList.remove("on")
 );
 
 $("resetGame").onclick=()=>{
-
-if(confirm("Reset CURRENT game? Saved season history stays.")){
-st=fresh(st.g);
+if(!confirm("Reset CURRENT game? Saved season history stays."))return;
+const status=stats(P,n=>st.status[n]==="absent"?"absent":"off");
+st={...fresh(st.g),status};
 render();
 save()
-}
 };
+
+function finalResult(item,game,previous){
+const scheduled=item.schedule[game.g];
+return {
+g:game.g,date:previous?.date||scheduled[0],opp:previous?.opp||scheduled[2],
+...normalizeStats(game,item)
+}
+}
+
+function putResult(item,result){
+const index=item.history.findIndex(game=>game.g===result.g);
+if(index<0)item.history.push(result);
+else item.history[index]=result;
+item.history.sort((a,b)=>a.g-b.g)
+}
 
 $("endGame").onclick=()=>{
-
-st.r=false;
-
-let g=S[st.g];
-
-if(!confirm(`END GAME?
-${g[0]} vs ${g[2]}
-Final: Knicks ${st.ks}-${st.os}`))return;
-
-let done={
-g:st.g,
-opp:g[2],
-date:g[0],
-ks:st.ks,
-os:st.os,
-pts:{...st.pts},
-played:JSON.parse(JSON.stringify(st.played))
-};
-
-let i=hist.findIndex(x=>+x.g===st.g);
-
-i>=0?hist[i]=done:hist.push(done);
-
-hist.sort((a,b)=>a.g-b.g);
-
-save();
-
-if(st.g<S.length-1)
-st=fresh(st.g+1);
-
+pause();
 render();
-save()
+const previous=hist.find(game=>game.g===st.g);
+const result=finalResult(season,st,previous);
+if(!confirm(`${previous?"Replace the saved final result?":"End game?"}
+${result.date} vs ${result.opp}
+Final: Knicks ${result.ks}–${result.os}`))return;
+
+const next=structuredClone(library);
+const item=next.seasons.find(item=>item.id===season.id);
+putResult(item,result);
+item.games[st.g]={...st};
+if(st.g<S.length-1)item.current++;
+commitLibrary(next)
 };
 
-function sp(){
-
-let o=Object.fromEntries(P.map(n=>[n,0]));
-
-hist.forEach(g=>
-P.forEach(n=>
-o[n]+=+(g.pts?.[n]||0)
-)
-);
-
-return o
+function commitLibrary(next){
+if(!persist(next))return false;
+library=next;
+selectSeason();
+adj=null;
+absOpen=false;
+renderSeasonSelector();
+render();
+return true
 }
 
-function rec(){
+function renderSeasonSelector(){
+$("activeSeason").innerHTML=library.seasons.filter(item=>!item.archived)
+.map(item=>`<option value="${esc(item.id)}">${esc(item.title)}</option>`).join("");
+$("activeSeason").value=library.active
+}
 
-let w=0,l=0;
+$("activeSeason").onchange=event=>{
+const selected=event.target.value;
+pause();
+render();
+if(!commitLibrary({...library,active:selected}))renderSeasonSelector()
+};
 
-hist.forEach(g=>{
-if(g.ks>g.os)w++;
-else if(g.ks<g.os)l++
+const gameLabel=game=>`${game[0]} · ${game[1]} vs ${game[2]}`;
+const findSeason=id=>library.seasons.find(item=>item.id===id);
+
+function showSeasons(){
+const editable=season.id!=="winter-2026-27";
+$("editRoster").hidden=!editable;
+$("practice").textContent=season.id==="winter-2026-27"
+?"Practice at FieldhouseUSA Frisco on Wednesdays at 7 PM, Court 1B, starting Dec 2, 2026. No practice Dec 23 or Jan 13."
+:"";
+const archive=library.seasons.filter(item=>item.id!==season.id);
+$("archive").innerHTML=archive.length?archive.map(item=>`
+<div class="histItem"><b>${esc(item.title)}</b>
+<div class="seasonActions">
+<button data-season-view="${esc(item.id)}">VIEW SEASON</button>
+${item.archived?"":`<button data-archive="${esc(item.id)}">ARCHIVE</button>`}
+</div></div>`).join(""):"<p>No previous seasons.</p>";
+$("seasonsModal").classList.add("on")
+}
+
+$("seasonsBtn").onclick=showSeasons;
+
+let viewedSeason;
+function showHistory(id){
+const item=findSeason(id);
+viewedSeason=id;
+$("historySeason").textContent=item.title+(id===library.active?"":" · Read-only");
+let wins=0,losses=0,ties=0;
+const totals=stats(namesOf(item),()=>({pts:0,played:0}));
+for(const result of item.history){
+if(result.ks>result.os)wins++;
+else if(result.ks<result.os)losses++;
+else ties++;
+for(const name of namesOf(item)){
+totals[name].pts+=result.pts[name];
+totals[name].played+=result.played[name][0]+result.played[name][1]
+}
+}
+$("record").textContent=`${wins}–${losses}${ties?`–${ties}`:""}`;
+$("seasonPts").innerHTML=item.roster.map(({full,name})=>`
+<div class="seasonP">${esc(full)}<br><small>${totals[name].pts} pts · ${fmt(totals[name].played)} played</small></div>`).join("");
+const sorted=[...item.history].sort((a,b)=>a.g-b.g);
+const pending=item.id==="fall-2026"&&!item.history.some(result=>result.g===7)
+?item.games[7]:null;
+$("hist").innerHTML=(pending?`
+<div class="histItem">
+<b>Fall finale awaiting confirmation</b>
+<p>${esc(gameLabel(item.schedule[7]))} · Knicks ${pending.ks}–${pending.os}</p>
+${resultTable(item,pending)}
+<button id="finalizeFall">CONFIRM FINAL</button>
+</div>`:"")+sorted.map(game=>`
+<details class="histItem">
+<summary>${esc(game.date)} vs ${esc(game.opp)} · Knicks ${game.ks}–${game.os} · ${game.ks>game.os?"WIN":game.ks<game.os?"LOSS":"TIE"}</summary>
+${resultTable(item,game)}
+<button data-correct="${game.g}">CORRECT RESULT</button>
+</details>`).join("")+(sorted.length?"":"<div class='histItem'>No completed games saved yet.</div>");
+if(id!==library.active){
+const schedule=document.createElement("details");
+schedule.className="histItem";
+schedule.innerHTML="<summary>Schedule and roster</summary>"+item.schedule.map(game=>
+`<p>${esc(gameLabel(game))} · ${esc(game[3])} · ${esc(game[4]||"Court TBD")}</p>`).join("");
+$("hist").append(schedule)
+}
+$("historyModal").classList.add("on")
+}
+
+function resultTable(item,result){
+return `<table><thead><tr><th>Player</th><th>PTS</th><th>1H</th><th>2H</th></tr></thead>
+<tbody>${item.roster.map(({full,name})=>`
+<tr><td>${esc(full)}</td><td>${result.pts[name]}</td>
+<td>${fmt(result.played[name][0])}</td><td>${fmt(result.played[name][1])}</td></tr>`).join("")}</tbody></table>`
+}
+
+$("historyBtn").onclick=()=>showHistory(library.active);
+$("archive").onclick=event=>{
+const id=event.target.dataset.seasonView;
+if(id){
+$("seasonsModal").classList.remove("on");
+showHistory(id);
+return
+}
+const item=findSeason(event.target.dataset.archive);
+if(!item||item.id===library.active||!confirm(`Archive ${item.title} as a past season?`))return;
+updateSeason(item.id,current=>current.archived=true)&&showSeasons()
+};
+
+function updateSeason(id,change){
+pause();
+render();
+const next=structuredClone(library);
+change(next.seasons.find(item=>item.id===id));
+return commitLibrary(next)
+}
+
+$("hist").onclick=event=>{
+const item=findSeason(viewedSeason);
+if(event.target.id==="finalizeFall"){
+const result=finalResult(item,item.games[7]);
+if(confirm(`Save the Fall finale as final? Knicks ${result.ks}–${result.os}`)
+&&updateSeason(item.id,current=>putResult(current,result)))showHistory(item.id);
+return
+}
+if(event.target.dataset.correct!==undefined)correctResult(item,+event.target.dataset.correct)
+};
+
+function openEditor(title,fields,submit){
+$("editorTitle").textContent=title;
+$("editorFields").innerHTML=fields;
+$("editorModal").classList.add("on");
+$("editorForm").onsubmit=event=>{
+event.preventDefault();
+if(submit(new FormData(event.currentTarget)))$("editorModal").classList.remove("on")
+}
+}
+
+const textField=(label,name,value="",required=true)=>`
+<label>${label}<input name="${name}" value="${esc(value)}" ${required?"required":""}></label>`;
+const numericField=(label,name,value)=>`
+<label>${label}<input type="number" name="${name}" value="${value}" min="0" max="999999" step="1" required></label>`;
+
+function correctionTime(label,name,value){
+return `<label>${label}<input name="${name}" value="${fmt(value)}" pattern="[0-9]{1,5}:[0-5][0-9]" title="Minutes and seconds, for example 5:30" required></label>`
+}
+
+function correctResult(item,index){
+const result=item.history.find(game=>game.g===index);
+if(!result)return;
+openEditor("Correct saved result",
+`<p class="seasonNote">${esc(result.date)} vs ${esc(result.opp)}</p>`+
+numericField("Knicks score","knicks",result.ks)+numericField("Opponent score","opponent",result.os)+
+item.roster.map(({full,name},i)=>`<div class="correctionStats"><b>${esc(full)}</b>
+${numericField("Points","p"+i,result.pts[name])}
+${correctionTime("1H (m:ss)","a"+i,result.played[name][0])}
+${correctionTime("2H (m:ss)","b"+i,result.played[name][1])}</div>`).join(""),
+form=>{
+const seconds=value=>{
+const [minutes,seconds]=value.split(":").map(Number);
+return minutes*60+seconds
+};
+const names=namesOf(item);
+const corrected={
+...result,ks:+form.get("knicks"),os:+form.get("opponent"),
+pts:stats(names,(name)=>+form.get("p"+names.indexOf(name))),
+played:stats(names,name=>{
+const i=names.indexOf(name);
+return [seconds(form.get("a"+i)),seconds(form.get("b"+i))]
+})
+};
+if(!confirm("Save these corrections to the completed game?"))return false;
+if(!updateSeason(item.id,current=>{
+putResult(current,corrected);
+const live=current.games[index];
+if(live)current.games[index]={...live,...normalizeStats(corrected,current)}
+}))return false;
+showHistory(item.id);
+return true
+})
+}
+
+function rosterField(roster=[]){
+return `<label>Player names, one per line<textarea name="roster" required>${esc(roster.map(player=>player.full).join("\n"))}</textarea></label>`
+}
+
+function readRoster(form){
+const roster=players(form.get("roster").split(/\r?\n/).map(name=>name.trim()).filter(Boolean));
+if(!roster.length||new Set(roster.map(player=>player.name)).size!==roster.length){
+alert("Enter at least one player and use a distinct first name or nickname for each.");
+return null
+}
+return roster
+}
+
+function scheduleFields(game=["","","","HOME",""]){
+return textField("Date","date",game[0])+textField("Time","time",game[1])+
+textField("Opponent","opponent",game[2])+
+`<label>Home or away<select name="side">
+<option ${game[3]==="HOME"?"selected":""}>HOME</option>
+<option ${game[3]==="AWAY"?"selected":""}>AWAY</option>
+</select></label>`+textField("Court","court",game[4],false)
+}
+
+function readGame(form){
+const game=["date","time","opponent","side","court"].map(key=>form.get(key)?.trim()||"");
+if(game.slice(0,3).some(field=>!field)){
+alert("Enter the date, time, and opponent.");
+return null
+}
+return game
+}
+
+$("newSeason").onclick=()=>openEditor("New season",textField("Season name","title")+
+rosterField()+"<h3>First game</h3>"+scheduleFields(),form=>{
+const title=form.get("title").trim();
+const roster=readRoster(form);
+const game=readGame(form);
+if(!title||!roster||!game)return false;
+if(library.seasons.some(item=>item.title.toLowerCase()===title.toLowerCase())){
+alert("A season with that name already exists.");
+return false
+}
+pause();
+render();
+const item=newSeason(crypto.randomUUID(),title,roster.map(player=>player.full),[game]);
+if(!commitLibrary({...library,active:item.id,seasons:[...library.seasons,item]}))return false;
+showSeasons();
+return true
 });
 
-return `${w}–${l}`
+$("editRoster").onclick=()=>openEditor("Edit roster",rosterField(season.roster),form=>{
+const roster=readRoster(form);
+if(!roster)return false;
+const removed=P.filter(name=>!roster.some(player=>player.name===name));
+const games=[...Object.values(season.games),...season.history];
+if(removed.some(name=>games.some(game=>game.pts[name]||game.played[name].some(Boolean)))){
+alert("Keep players with recorded points or minutes on the season roster to preserve their statistics.");
+return false
 }
+if(!updateSeason(season.id,item=>{
+item.roster=roster;
+item.history=item.history.map(game=>({...game,...normalizeStats(game,item)}));
+for(const [key,game] of Object.entries(item.games))item.games[key]=normalizeGame(game,item,game.g)
+}))return false;
+showSeasons();
+return true
+});
 
-function rh(){
-
-$("record").textContent=rec();
-
-let x=sp();
-
-$("seasonPts").innerHTML=P.map(n=>`
-<div class="seasonP">
-<b>${x[n]}</b>
-<span>${n}</span>
-</div>
-`).join("");
-
-$("hist").innerHTML=hist.length
-?hist.map(g=>`
-<div class="histItem">
-<b>${g.date} vs ${g.opp}</b>
-${g.ks>g.os?"WIN":g.ks<g.os?"LOSS":"TIE"} · Knicks ${g.ks}-${g.os}
-</div>
-`).join("")
-:`<div class="histItem">No completed games saved yet.</div>`
-}
-
-$("historyBtn").onclick=()=>{
-rh();
-$("historyModal").classList.add("on")
+$("editSchedule").onclick=()=>{
+const winter=season.id==="winter-2026-27";
+openEditor("Schedule",
+`<label>Game<select id="scheduleGame" name="game">
+${S.map((game,i)=>`<option value="${i}">${i+1}. ${esc(gameLabel(game))}</option>`).join("")}
+<option value="${S.length}">${winter?"Add playoff game":"Add game"}</option>
+</select></label><div class="seasonFields" id="scheduleFields"></div>`,
+form=>{
+const index=+form.get("game");
+const current=S[index];
+const game=winter&&current?[...current.slice(0,4),form.get("court").trim()]:readGame(form);
+if(!game)return false;
+if(!updateSeason(season.id,item=>item.schedule[index]=game))return false;
+showSeasons();
+return true
+});
+const select=$("scheduleGame");
+select.value=String(st.g);
+select.onchange=()=>{
+const game=S[+select.value];
+$("scheduleFields").innerHTML=winter&&game
+?`<p class="seasonNote">FieldhouseUSA Frisco · ${esc(game[3])} · ${game[3]==="HOME"?"WHITE":"BLACK"}</p>`+
+textField("Court","court",game[4],false)
+:scheduleFields(game)
+};
+select.onchange()
 };
 
 $("exportBtn").onclick=()=>{
-
-let payload={
-app:"Knicks Season Tracker",
-version:2,
-exportedAt:new Date().toISOString(),
-history:hist,
-live:{...st,r:false,last:null}
-};
-
-let blob=new Blob(
-[JSON.stringify(payload,null,2)],
-{type:"application/json"}
-);
-
-let u=URL.createObjectURL(blob);
-let a=document.createElement("a");
-
-a.href=u;
-a.download=`knicks-v2-season-backup-${new Date().toISOString().slice(0,10)}.json`;
-
-a.click();
-
-setTimeout(()=>URL.revokeObjectURL(u),1000)
+const backup={app:BACKUP_APP,exportedAt:new Date().toISOString(),...library};
+const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob);
+const link=document.createElement("a");
+link.href=url;
+link.download=`knicks-coach-seasons-${backup.exportedAt.slice(0,10)}.json`;
+link.click();
+setTimeout(()=>URL.revokeObjectURL(url),1000)
 };
 
 $("importBtn").onclick=()=>$("file").click();
-
-$("file").onchange=e=>{
-
-let f=e.target.files?.[0];
-
-if(!f)return;
-
-let r=new FileReader();
-
-r.onload=()=>{
-
+$("file").onchange=async event=>{
+const file=event.target.files[0];
+event.target.value="";
+if(!file)return;
 try{
-
-let d=JSON.parse(r.result);
-
-if(!Array.isArray(d.history))
-throw 0;
-
-if(!confirm(`Import ${d.history.length} completed game(s)?`))
-return;
-
-hist=d.history.map(norm);
-
-save();
-rh();
+const data=JSON.parse(await file.text());
+const multi=data?.app===BACKUP_APP;
+const incoming=multi?validateStore(data):null;
+const fall=multi?null:migrateFall(data?.history,data?.live);
+const targets=multi?incoming.seasons:[fall];
+const conflicts=targets.filter(item=>findSeason(item.id)).map(item=>item.title);
+const prompt=multi
+?`Restore ${targets.length} season(s) from this backup?${conflicts.length?` This replaces matching seasons: ${conflicts.join(", ")}.`:""}`
+:"Import this Fall backup? Matching Fall games will be replaced. Other Fall games and seasons will be preserved.";
+if(!confirm(prompt))return;
+pause();
 render();
-
-alert("Season backup imported.")
-
-}catch{
-
-alert("That file is not a valid Knicks season backup.")
-
+const next=structuredClone(library);
+for(const item of targets){
+const index=next.seasons.findIndex(existing=>existing.id===item.id);
+if(index<0)next.seasons.push(item);
+else if(multi)next.seasons[index]=item;
+else{
+const existing=next.seasons[index];
+for(const result of item.history)putResult(existing,result);
+Object.assign(existing.games,item.games);
+if(data.live!=null)existing.current=item.current
 }
-
-e.target.value=""
-};
-
-r.readAsText(f)
+}
+if(multi)next.active=incoming.active;
+validateStore(next);
+if(commitLibrary(next))showHistory(multi?next.active:fall.id)
+}catch(error){
+console.error(error);
+alert("That file is not a valid Knicks Coach season backup.")
+}
 };
 
 /* =====================================================
@@ -1754,11 +2147,11 @@ d="M400 625 C385 510 385 390 400 280"/>
 
 /* BLANK */
 else if(name==="BLANK COURT"){
-body=``
+body=`<g id="ink"></g>`
 }
 
 $("call").innerHTML=`
-<svg class="diagram"
+<svg class="diagram ${name==="BLANK COURT"?"sketch":""}"
 viewBox="0 0 800 800"
 preserveAspectRatio="xMidYMid meet">
 ${courtBase()}
@@ -1815,20 +2208,96 @@ $("playSub").textContent=p.s;
 $("keyPoints").innerHTML=
 p.k.map(x=>`<li>${x}</li>`).join("");
 
-draw(name)
+draw(name);
+$("pens").hidden=name!=="BLANK COURT";
+if(name==="BLANK COURT")attachSketch()
 }
 
 document.querySelectorAll("[data-cat]").forEach(b=>
 b.onclick=()=>setCat(b.dataset.cat)
 );
 
+const strokes=[];
+let pen="#111";
+let activeStroke=null;
+
+function makeStrokePath(stroke){
+const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+const [x,y]=stroke.start;
+path.setAttribute("d",`M ${x} ${y} L ${x+0.01} ${y}${stroke.segments.join("")}`);
+path.setAttribute("stroke",stroke.color);
+path.setAttribute("stroke-width","7");
+path.setAttribute("stroke-linecap","round");
+path.setAttribute("stroke-linejoin","round");
+path.setAttribute("fill","none");
+return path
+}
+
+function renderSketch(){
+const ink=$("ink");
+if(ink)ink.replaceChildren(...strokes.map(makeStrokePath));
+updatePens()
+}
+
+function updatePens(){
+$("undoStroke").disabled=!strokes.length;
+$("clearSketch").disabled=!strokes.length
+}
+
+function attachSketch(){
+const svg=$("ink").ownerSVGElement;
+activeStroke=null;
+const point=event=>{
+const matrix=svg.getScreenCTM();
+const position=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+return [position.x,position.y]
+};
+svg.onpointerdown=event=>{
+if(activeStroke||event.button!==0)return;
+event.preventDefault();
+svg.setPointerCapture(event.pointerId);
+const stroke={color:pen,start:point(event),segments:[]};
+const path=makeStrokePath(stroke);
+strokes.push(stroke);
+activeStroke={id:event.pointerId,stroke,path};
+$("ink").append(path);
+updatePens()
+};
+svg.onpointermove=event=>{
+if(activeStroke?.id!==event.pointerId)return;
+const segment=" L "+point(event).join(" ");
+activeStroke.stroke.segments.push(segment);
+activeStroke.path.setAttribute("d",activeStroke.path.getAttribute("d")+segment)
+};
+svg.onpointerup=svg.onpointercancel=svg.onlostpointercapture=event=>{
+if(activeStroke?.id===event.pointerId)activeStroke=null
+};
+renderSketch()
+}
+
+document.querySelectorAll("[data-pen]").forEach(button=>button.onclick=()=>{
+pen=button.dataset.pen;
+document.querySelectorAll("[data-pen]").forEach(option=>
+option.setAttribute("aria-pressed",String(option===button)))
+});
+$("undoStroke").onclick=()=>{
+activeStroke=null;
+strokes.pop();
+renderSketch()
+};
+$("clearSketch").onclick=()=>{
+activeStroke=null;
+strokes.length=0;
+renderSketch()
+};
+
 setCat("OFFENSE");
 
 $("clipBtn").onclick=()=>
 $("clipModal").classList.add("on");
 
+renderSeasonSelector();
 render();
-save();
 
 })();
 </script>
