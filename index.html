@@ -115,14 +115,7 @@ color:#050505
 
 .rosterList{display:grid;gap:5px;margin-top:8px}
 .rosterRow{display:flex;align-items:center;justify-content:space-between;border:1px solid #333;border-radius:8px;background:#111;padding:9px 10px}
-.rosterRow{gap:6px}
-.rosterRow b{font-size:15px;flex:1;overflow-wrap:anywhere}
-.rosterRow.dropTarget{border-color:var(--o)}
-.rosterOrder{display:flex;gap:3px}
-.rosterOrder button,.dragHandle{width:34px;height:44px;border:1px solid #555;border-radius:7px;background:#181818;color:#fff}
-.rosterOrder button:disabled{opacity:.35}
-.dragHandle{display:grid;place-items:center;flex:none;touch-action:none;user-select:none;cursor:grab;color:var(--o)}
-.dragHandle:active{cursor:grabbing}
+.rosterRow b{font-size:15px}
 .presence{height:32px;min-width:82px;border:1px solid #555;border-radius:7px;background:#173f59;color:#fff;font-size:9px;font-weight:950}
 .presence.abs{background:#333;color:#bbb}
 
@@ -387,7 +380,7 @@ font:inherit;font-size:12px;min-height:32px;border:1px solid #444;border-radius:
 <h2>Roster</h2>
 <button class="close" data-close="rosterModal">DONE</button>
 </div>
-<div style="color:#999;font-size:11px">Mark players absent for this game. Drag the handles or use the arrows to reorder players for the season.</div>
+<div style="color:#999;font-size:11px">Mark players absent before the game.</div>
 <div class="rosterList" id="rosterList"></div>
 </div>
 </div>
@@ -902,101 +895,27 @@ render()
 bind()
 }
 
-function moveRosterPlayer(from,to,focusDirection){
-if(from===to||to<0||to>=P.length)return;
-const roster=[...season.roster];
-const [player]=roster.splice(from,1);
-roster.splice(to,0,player);
-const next={...library,seasons:library.seasons.map(item=>item===season?{...item,roster}:item)};
-if(!persist(next))return;
-library=next;
-season=next.seasons.find(item=>item.id===next.active);
-P=namesOf(season);
-renderRoster();
-render();
-if(focusDirection){
-const row=$("rosterList").children[to];
-const button=row.querySelector(`[data-move="${focusDirection}"]:enabled`)||row.querySelector("[data-move]:enabled");
-button?.focus()
-}
-}
-
-function bindRosterDrag(handle,from){
-let pointer=null;
-let target=null;
-
-function clearTarget(){
-target?.classList.remove("dropTarget");
-target=null
-}
-
-handle.onpointerdown=event=>{
-if(pointer!==null||event.button!==0)return;
-event.preventDefault();
-handle.setPointerCapture(event.pointerId);
-pointer=event.pointerId
-};
-
-function rowAt(event){
-const row=document.elementFromPoint(event.clientX,event.clientY)?.closest("[data-roster-index]");
-return row?.parentElement===$("rosterList")?row:null
-}
-
-handle.onpointermove=event=>{
-if(event.pointerId!==pointer)return;
-clearTarget();
-target=rowAt(event);
-if(target&&+target.dataset.rosterIndex!==from)target.classList.add("dropTarget")
-};
-
-handle.onpointerup=event=>{
-if(event.pointerId!==pointer)return;
-const row=rowAt(event);
-pointer=null;
-clearTarget();
-if(row)moveRosterPlayer(from,+row.dataset.rosterIndex)
-};
-
-handle.onpointercancel=handle.onlostpointercapture=event=>{
-if(event.pointerId!==pointer)return;
-pointer=null;
-clearTarget()
-}
-}
-
 function renderRoster(){
-const list=$("rosterList");
-list.innerHTML=season.roster.map(({name,full},index)=>`
-<div class="rosterRow" data-roster-index="${index}">
-<span class="dragHandle" aria-hidden="true">☰</span>
-<b>${esc(full)}</b>
-<div class="rosterOrder">
-<button data-move="-1" aria-label="Move ${esc(full)} up" ${index===0?"disabled":""}>↑</button>
-<button data-move="1" aria-label="Move ${esc(full)} down" ${index===P.length-1?"disabled":""}>↓</button>
-</div>
-<button class="presence ${st.status[name]==="absent"?"abs":""}" data-presence="${esc(name)}">
-${st.status[name]==="absent"?"ABSENT":"PRESENT"}
+
+$("rosterList").innerHTML=P.map(n=>`
+<div class="rosterRow">
+<b>${esc(season.roster.find(player=>player.name===n).full)}</b>
+<button class="presence ${st.status[n]==="absent"?"abs":""}" data-presence="${esc(n)}">
+${st.status[n]==="absent"?"ABSENT":"PRESENT"}
 </button>
 </div>
 `).join("");
 
-for(const [index,row] of Array.from(list.children).entries()){
-bindRosterDrag(row.querySelector(".dragHandle"),index);
-row.querySelectorAll("[data-move]").forEach(button=>button.onclick=()=>{
-const direction=+button.dataset.move;
-moveRosterPlayer(index,index+direction,direction)
-});
-row.querySelector("[data-presence]").onclick=event=>{
-const button=event.currentTarget;
-const name=button.dataset.presence;
-const absent=st.status[name]!=="absent";
-st.status[name]=absent?"absent":"off";
-button.classList.toggle("abs",absent);
-button.textContent=absent?"ABSENT":"PRESENT";
+document.querySelectorAll("[data-presence]").forEach(b=>b.onclick=()=>{
+
+let n=b.dataset.presence;
+
+st.status[n]=st.status[n]==="absent"?"off":"absent";
+
+renderRoster();
 render();
 save()
-}
-}
+})
 }
 
 $("rosterBtn").onclick=e=>{
